@@ -1,0 +1,25 @@
+{
+  "name": "ai-blog-ssr",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3011",
+    "build": "next build",
+    "start": "next start -p 3011",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@contentstack/delivery-sdk": "^5.2.0",
+    "@contentstack/live-preview-utils": "^4.4.3",
+    "@contentstack/utils": "^1.9.1",
+    "next": "16.2.5",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}
