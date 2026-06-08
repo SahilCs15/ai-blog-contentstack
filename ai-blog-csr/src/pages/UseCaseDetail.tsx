@@ -12,7 +12,7 @@ export default function UseCaseDetail() {
   const { data: u, loading, error } = useEntry<UseCase | null>(loader, [slug])
 
   if (loading && !u) return <Loading label="Loading use case…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!u) return <Empty title="Use case not found" />
 
   return (

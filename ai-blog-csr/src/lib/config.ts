@@ -1,7 +1,8 @@
 // Central Contentstack configuration for the CSR AI-blog app.
 //
-// All values come from Vite env vars (VITE_*). Copy .env.example to .env and
-// fill in your stack's credentials. No secrets are committed to source.
+// Values come from Vite env vars (VITE_*) when present, otherwise fall back to
+// the dev23 stack the content was seeded into. Live preview is wired so the app
+// works standalone AND inside the Contentstack Visual Builder / preview iframe.
 
 function env(key: string): string {
   const v = (import.meta.env as Record<string, string | undefined>)[key]
@@ -17,7 +18,8 @@ export const config = {
   deliveryToken: env('VITE_CS_DELIVERY_TOKEN'),
   previewToken: env('VITE_CS_PREVIEW_TOKEN'),
   environment: env('VITE_CS_ENVIRONMENT') || 'development',
-  // Region hosts. e.g. dev23-cdn.csnonprod.com, or cdn.contentstack.io for prod.
+  // Region hosts (dev23 / csnonprod). For prod stacks these become
+  // cdn.contentstack.io / rest-preview.contentstack.com etc.
   cdnHost: host(env('VITE_CS_CDN_HOST')),
   previewHost: host(env('VITE_CS_PREVIEW_HOST')),
   appHost: host(env('VITE_CS_APP_HOST')),

@@ -12,7 +12,7 @@ export default function TutorialDetail() {
   const { data: t, loading, error } = useEntry<Tutorial | null>(loader, [slug])
 
   if (loading && !t) return <Loading label="Loading tutorial…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!t) return <Empty title="Tutorial not found" />
 
   return (

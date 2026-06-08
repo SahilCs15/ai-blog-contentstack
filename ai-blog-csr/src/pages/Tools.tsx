@@ -29,7 +29,7 @@ export default function Tools() {
   }, [data, active, q])
 
   if (loading && !data) return <Loading label="Loading AI tools…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
 
   return (
     <section className="section">

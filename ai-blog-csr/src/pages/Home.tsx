@@ -36,7 +36,7 @@ export default function Home() {
   const { data, loading, error } = useEntry<HomeData>(loader)
 
   if (loading && !data) return <Loading label="Loading the AI hub…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   const page = data?.page
 
   const stats = page?.stats?.length

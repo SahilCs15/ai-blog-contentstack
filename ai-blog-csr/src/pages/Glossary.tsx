@@ -29,7 +29,7 @@ export default function Glossary() {
   }, [data, q])
 
   if (loading && !data) return <Loading label="Loading glossary…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
 
   return (
     <section className="section">

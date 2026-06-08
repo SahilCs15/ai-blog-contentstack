@@ -22,7 +22,7 @@ export default function PostDetail() {
   }, [post])
 
   if (loading && !post) return <Loading label="Loading article…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!post) return <Empty title="Article not found" hint="It may be unpublished or the slug may be wrong." />
 
   const author = one<Author>(post.author)

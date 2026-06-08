@@ -31,7 +31,7 @@ export default function News() {
   const shown = sorted.slice(0, page * PAGE)
 
   if (loading && !data) return <Loading label="Loading news…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
 
   return (
     <section className="section">

@@ -25,7 +25,7 @@ export default function ModelDetail() {
   const { data: m, loading, error } = useEntry<AiModel | null>(loader, [slug])
 
   if (loading && !m) return <Loading label="Loading model…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!m) return <Empty title="Model not found" />
 
   const dev = one<AiCompany>(m.developer)

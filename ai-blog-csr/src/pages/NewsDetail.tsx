@@ -14,7 +14,7 @@ export default function NewsDetail() {
   const { data: article, loading, error } = useEntry<AiNews | null>(loader, [slug])
 
   if (loading && !article) return <Loading label="Loading article…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!article) return <Empty title="Article not found" />
 
   return (

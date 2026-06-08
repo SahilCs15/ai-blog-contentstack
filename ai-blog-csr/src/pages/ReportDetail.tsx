@@ -23,7 +23,7 @@ export default function ReportDetail() {
   const { data: r, loading, error } = useEntry<IndustryReport | null>(loader, [slug])
 
   if (loading && !r) return <Loading label="Loading report…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!r) return <Empty title="Report not found" />
 
   return (

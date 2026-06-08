@@ -12,7 +12,7 @@ export default function ComparisonDetail() {
   const { data: c, loading, error } = useEntry<Comparison | null>(loader, [slug])
 
   if (loading && !c) return <Loading label="Loading comparison…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!c) return <Empty title="Comparison not found" />
 
   return (

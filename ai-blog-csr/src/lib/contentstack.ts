@@ -9,7 +9,21 @@ import contentstack, { Region, QueryOperation, type LivePreviewQuery } from '@co
 import ContentstackLivePreview, { type IStackSdk } from '@contentstack/live-preview-utils'
 import { addEditableTags } from '@contentstack/utils'
 import { config } from './config'
+import { toCsError } from './cs-error'
 import type { BlogPost, LandingPage, Author, Category } from './types'
+
+/** Context attached to every error so the on-page error card shows where it failed. */
+function ctx(extra: Record<string, string | undefined> = {}): Record<string, string | undefined> {
+  return {
+    environment: config.environment || '(missing)',
+    cdnHost: config.cdnHost || '(missing)',
+    previewHost: config.previewHost || '(missing)',
+    locale: config.locale,
+    apiKey: config.apiKey ? config.apiKey.slice(0, 10) + '…' : '(missing — set VITE_CS_API_KEY)',
+    deliveryToken: config.deliveryToken ? 'set' : '(missing — set VITE_CS_DELIVERY_TOKEN)',
+    ...extra,
+  }
+}
 
 export const stack = contentstack.stack({
   apiKey: config.apiKey,
@@ -91,42 +105,54 @@ function tagify<T>(entry: T, contentTypeUid: string): T {
 }
 
 export async function getLandingPage(): Promise<LandingPage | null> {
-  const q = stack
-    .contentType('page')
-    .entry()
-    .locale(config.locale)
-    .includeReference(...INCLUDE_PAGE)
-  withLivePreview(q as never)
-  const res = await q.find<LandingPage>()
-  const page = res.entries?.[0]
-  if (!page) return null
-  return tagify(page, 'page')
+  try {
+    const q = stack
+      .contentType('page')
+      .entry()
+      .locale(config.locale)
+      .includeReference(...INCLUDE_PAGE)
+    withLivePreview(q as never)
+    const res = await q.find<LandingPage>()
+    const page = res.entries?.[0]
+    if (!page) return null
+    return tagify(page, 'page')
+  } catch (e) {
+    throw toCsError(e, ctx({ contentType: 'page', operation: 'get landing page' }))
+  }
 }
 
 export async function getAllPosts(): Promise<BlogPost[]> {
-  const q = stack
-    .contentType('blog_post')
-    .entry()
-    .locale(config.locale)
-    .includeReference(...INCLUDE_POST)
-  withLivePreview(q as never)
-  const res = await q.find<BlogPost>()
-  return (res.entries ?? []).map((e) => tagify(e, 'blog_post'))
+  try {
+    const q = stack
+      .contentType('blog_post')
+      .entry()
+      .locale(config.locale)
+      .includeReference(...INCLUDE_POST)
+    withLivePreview(q as never)
+    const res = await q.find<BlogPost>()
+    return (res.entries ?? []).map((e) => tagify(e, 'blog_post'))
+  } catch (e) {
+    throw toCsError(e, ctx({ contentType: 'blog_post', operation: 'list posts' }))
+  }
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const q = stack
-    .contentType('blog_post')
-    .entry()
-    .locale(config.locale)
-    .includeReference(...INCLUDE_POST)
-    .query()
-    .where('slug', QueryOperation.EQUALS, slug)
-  withLivePreview(q as never)
-  const res = await q.find<BlogPost>()
-  const post = res.entries?.[0]
-  if (!post) return null
-  return tagify(post, 'blog_post')
+  try {
+    const q = stack
+      .contentType('blog_post')
+      .entry()
+      .locale(config.locale)
+      .includeReference(...INCLUDE_POST)
+      .query()
+      .where('slug', QueryOperation.EQUALS, slug)
+    withLivePreview(q as never)
+    const res = await q.find<BlogPost>()
+    const post = res.entries?.[0]
+    if (!post) return null
+    return tagify(post, 'blog_post')
+  } catch (e) {
+    throw toCsError(e, ctx({ contentType: 'blog_post', slug, operation: 'get post by slug' }))
+  }
 }
 
 export async function getPostByUid(uid: string): Promise<BlogPost | null> {
@@ -172,25 +198,33 @@ interface FindResult<T> {
 }
 
 export async function getList<T>(ct: string, opts: ListOpts = {}): Promise<{ items: T[]; total: number }> {
-  let q: any = stack.contentType(ct).entry().locale(config.locale).includeCount()
-  if (opts.include?.length) q = q.includeReference(...opts.include)
-  if (opts.limit) q = q.limit(opts.limit)
-  if (opts.skip) q = q.skip(opts.skip)
-  withLivePreview(q)
-  const res = (await q.find()) as FindResult<T>
-  const items = (res.entries ?? []).map((e) => tagify(e, ct))
-  return { items, total: res.count ?? items.length }
+  try {
+    let q: any = stack.contentType(ct).entry().locale(config.locale).includeCount()
+    if (opts.include?.length) q = q.includeReference(...opts.include)
+    if (opts.limit) q = q.limit(opts.limit)
+    if (opts.skip) q = q.skip(opts.skip)
+    withLivePreview(q)
+    const res = (await q.find()) as FindResult<T>
+    const items = (res.entries ?? []).map((e) => tagify(e, ct))
+    return { items, total: res.count ?? items.length }
+  } catch (e) {
+    throw toCsError(e, ctx({ contentType: ct, operation: 'list entries' }))
+  }
 }
 
 export async function getBySlug<T>(ct: string, slug: string, include: string[] = []): Promise<T | null> {
-  let q: any = stack
-    .contentType(ct)
-    .entry()
-    .locale(config.locale)
-  if (include.length) q = q.includeReference(...include)
-  q = q.query().where('slug', QueryOperation.EQUALS, slug)
-  withLivePreview(q)
-  const res = (await q.find()) as FindResult<T>
-  const entry = res.entries?.[0]
-  return entry ? tagify(entry, ct) : null
+  try {
+    let q: any = stack
+      .contentType(ct)
+      .entry()
+      .locale(config.locale)
+    if (include.length) q = q.includeReference(...include)
+    q = q.query().where('slug', QueryOperation.EQUALS, slug)
+    withLivePreview(q)
+    const res = (await q.find()) as FindResult<T>
+    const entry = res.entries?.[0]
+    return entry ? tagify(entry, ct) : null
+  } catch (e) {
+    throw toCsError(e, ctx({ contentType: ct, slug, operation: 'get entry by slug' }))
+  }
 }

@@ -13,7 +13,7 @@ export default function CompanyDetail() {
   const { data: c, loading, error } = useEntry<AiCompany | null>(loader, [slug])
 
   if (loading && !c) return <Loading label="Loading company…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!c) return <Empty title="Company not found" />
 
   return (

@@ -2,7 +2,7 @@
 //
 // Server-side fetches read these values; the client LivePreviewInit component
 // reads the public NEXT_PUBLIC_* subset to bootstrap the live-preview SDK.
-// All values come from env vars — copy .env.example to .env. No secrets in source.
+// Defaults point at the seeded dev23 / csnonprod stack.
 
 function host(url: string): string {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '')

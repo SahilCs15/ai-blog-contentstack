@@ -43,7 +43,7 @@ export default function Catalog<T extends CatalogItem>({
   }, [data, q, searchKeys])
 
   if (loading && !data) return <Loading label={`Loading ${title.toLowerCase()}…`} />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
 
   return (
     <section className="section">

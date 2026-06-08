@@ -8,11 +8,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { onLivePreviewChange } from './contentstack'
+import { toCsError, type CsErrorDetail } from './cs-error'
 
 interface State<T> {
   data: T | null
   loading: boolean
-  error: string | null
+  error: CsErrorDetail | null
 }
 
 export function useEntry<T>(loader: () => Promise<T>, deps: unknown[] = []): State<T> {
@@ -26,7 +27,11 @@ export function useEntry<T>(loader: () => Promise<T>, deps: unknown[] = []): Sta
       const data = await loaderRef.current()
       setState({ data, loading: false, error: null })
     } catch (e) {
-      setState({ data: null, loading: false, error: e instanceof Error ? e.message : String(e) })
+      // Loaders throw CsErrorDetail already; toCsError is a safety net for anything else.
+      const detail = (e && typeof e === 'object' && 'message' in e && 'context' in e)
+        ? (e as CsErrorDetail)
+        : toCsError(e)
+      setState({ data: null, loading: false, error: detail })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)

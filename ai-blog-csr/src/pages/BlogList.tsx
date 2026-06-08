@@ -21,7 +21,7 @@ export default function BlogList() {
   }, [data, active])
 
   if (loading && !data) return <Loading label="Loading articles…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
 
   return (
     <section className="section">

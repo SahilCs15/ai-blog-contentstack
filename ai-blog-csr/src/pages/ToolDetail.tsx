@@ -27,7 +27,7 @@ export default function ToolDetail() {
   const { data: tool, loading, error } = useEntry<AiTool | null>(loader, [slug])
 
   if (loading && !tool) return <Loading label="Loading tool…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
   if (!tool) return <Empty title="Tool not found" />
 
   const category = one<AiCategory>(tool.category)

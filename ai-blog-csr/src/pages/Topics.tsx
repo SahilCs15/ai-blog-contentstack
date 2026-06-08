@@ -15,7 +15,7 @@ export default function Topics() {
   const { data, loading, error } = useEntry<{ categories: Category[]; posts: BlogPost[] }>(loader)
 
   if (loading && !data) return <Loading label="Loading topics…" />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState error={error} />
 
   const count = (catUid: string) =>
     (data?.posts ?? []).filter((p) => one<Category>(p.category)?.uid === catUid).length

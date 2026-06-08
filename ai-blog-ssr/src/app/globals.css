@@ -349,3 +349,23 @@ img { display: block; max-width: 100%; }
 @media (max-width: 640px) {
   .nav { display: flex; max-width: 60vw; }
 }
+
+/* ---------------- On-page API error card (debug) ---------------- */
+.state--error .errcard__headline { color: #fca5a5; font-size: 16px; font-weight: 600; margin: 4px 0 16px; }
+.errcard {
+  text-align: left; max-width: 720px; margin: 0 auto; background: var(--surface);
+  border: 1px solid #4b2730; border-radius: var(--radius); padding: 18px 20px;
+}
+.errcard__rows { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+.errcard__row { display: contents; }
+.errcard__key { color: var(--text-faint); font-size: 13px; font-family: ui-monospace, monospace; white-space: nowrap; }
+.errcard__val { color: var(--text); font-size: 13px; font-family: ui-monospace, monospace; word-break: break-word; }
+.errcard__label { color: var(--text-faint); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px; }
+.errcard__pre {
+  background: #0d0f15; border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+  font-size: 12px; color: #e0b4b4; overflow: auto; max-height: 280px; margin: 0;
+  white-space: pre-wrap; word-break: break-word;
+}
+.errcard__details { margin-top: 14px; }
+.errcard__details summary { cursor: pointer; color: var(--text-dim); font-size: 13px; }
+.state--error .state__hint { max-width: 720px; margin: 16px auto 0; }
