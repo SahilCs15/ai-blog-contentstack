@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { AiModel, AiCompany } from '../lib/hub-types'
@@ -21,7 +22,7 @@ function Chips({ title, items }: { title: string; items?: string[] }) {
 
 export default function ModelDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<AiModel>('ai_model', slug, ['developer']), [slug])
+  const loader = useCallback((locale: string) => getBySlug<AiModel>('ai_model', slug, ['developer'], locale), [slug])
   const { data: m, loading, error } = useEntry<AiModel | null>(loader, [slug])
 
   if (loading && !m) return <Loading label="Loading model…" />

@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { AiCompany } from '../lib/hub-types'
@@ -9,7 +10,7 @@ import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function CompanyDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<AiCompany>('ai_company', slug), [slug])
+  const loader = useCallback((locale: string) => getBySlug<AiCompany>('ai_company', slug, undefined, locale), [slug])
   const { data: c, loading, error } = useEntry<AiCompany | null>(loader, [slug])
 
   if (loading && !c) return <Loading label="Loading company…" />

@@ -1,10 +1,18 @@
 node_modules
 .next
 out
-.env
-.env.local
 *.log
 .DS_Store
 next-env.d.ts
 tsconfig.tsbuildinfo
-.vercel
+
+# secrets / local config — never commit (keep only .env.example)
+.env*
+!.env.example
+.vercel*
+
+# csdx import backups + logs (large / may contain content dumps)
+_backup_*
+logs/
+contentstack-cli-logs/
+*.bak

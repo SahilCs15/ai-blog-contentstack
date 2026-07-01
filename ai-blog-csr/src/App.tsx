@@ -1,5 +1,7 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Layout from './components/Layout'
+import { defaultLocale } from './lib/locale'
+import { DEFAULT_REGION, isKnownRegion } from './lib/regions'
 import Home from './pages/Home'
 import BlogList from './pages/BlogList'
 import PostDetail from './pages/PostDetail'
@@ -21,12 +23,34 @@ import Comparisons from './pages/Comparisons'
 import ComparisonDetail from './pages/ComparisonDetail'
 import Reports from './pages/Reports'
 import ReportDetail from './pages/ReportDetail'
+import AllFields from './pages/AllFields'
+import GraphqlFields from './pages/GraphqlFields'
 import { Empty } from './components/States'
+
+// Canonicalize any path to `/:region/:locale/...`. If the first segment isn't a
+// known region, prepend the default region; then ensure a locale segment. So
+// `/blog` → `/dev11/en-us/blog`, `/dev23` → `/dev23/en-us`. Region as a path
+// segment (not a query) survives the Visual Builder appending an entry's `url`.
+function RedirectToDefaults() {
+  const { pathname, search } = useLocation()
+  const segs = pathname.split('/').filter(Boolean)
+  let region = DEFAULT_REGION
+  let rest = segs
+  if (isKnownRegion(segs[0])) {
+    region = segs[0]
+    rest = segs.slice(1)
+  }
+  const hasLocale = rest[0] && /^[a-z]{2}(-[a-z0-9]+)?$/i.test(rest[0])
+  const locale = hasLocale ? rest[0] : defaultLocale
+  const tail = hasLocale ? rest.slice(1) : rest
+  const target = `/${region}/${locale}${tail.length ? '/' + tail.join('/') : ''}${search}`
+  return <Navigate to={target} replace />
+}
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route path=":region/:locale" element={<Layout />}>
         <Route index element={<Home />} />
 
         <Route path="blog" element={<BlogList />} />
@@ -59,8 +83,14 @@ export default function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="reports/:slug" element={<ReportDetail />} />
 
+        <Route path="all-fields" element={<AllFields />} />
+        <Route path="graphql" element={<GraphqlFields />} />
+
         <Route path="*" element={<Empty title="Page not found" hint="Try the homepage or the tools directory." />} />
       </Route>
+
+      {/* Any path missing a region/locale prefix → canonicalize. */}
+      <Route path="*" element={<RedirectToDefaults />} />
     </Routes>
   )
 }

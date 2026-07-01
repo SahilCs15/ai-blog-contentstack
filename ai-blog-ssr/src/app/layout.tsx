@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import Nav from '@/components/Nav'
 import LivePreviewInit from '@/components/LivePreviewInit'
+import { getRegion } from '@/lib/region-server'
+import { getConfig } from '@/lib/config'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -9,34 +9,28 @@ export const metadata: Metadata = {
   description: 'Clear, well-sourced writing about artificial intelligence — server-side rendered with Contentstack.',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// Root layout: only the document shell + the Live Preview bootstrap (which must
+// mount on every route). The visual chrome (nav/footer) and locale handling live
+// in app/[locale]/layout.tsx so they can read the active locale.
+//
+// The active region is resolved server-side (from the `?region=` query via
+// middleware) and only its PUBLIC config (api key + preview token + hosts) is
+// passed to the client LP bootstrap. The delivery token never leaves the server.
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const region = await getRegion()
+  const c = getConfig(region)
+  const livePreview = {
+    apiKey: c.apiKey,
+    environment: c.environment,
+    previewToken: c.previewToken,
+    previewHost: c.previewHost,
+    appHost: c.appHost,
+  }
   return (
     <html lang="en">
       <body>
-        <LivePreviewInit />
-        <div className="shell">
-          <header className="topbar">
-            <div className="topbar__inner">
-              <Link href="/" className="brand">
-                <span className="brand__mark" aria-hidden>◆</span>
-                <span className="brand__name">Synapse</span>
-                <span className="brand__tag">SSR</span>
-              </Link>
-              <Nav />
-            </div>
-          </header>
-
-          <main className="main">{children}</main>
-
-          <footer className="footer">
-            <div className="footer__inner">
-              <span>Synapse — the AI technology journal</span>
-              <span className="footer__muted">
-                Server-side rendered · Next.js App Router · Contentstack · Live Preview enabled
-              </span>
-            </div>
-          </footer>
-        </div>
+        <LivePreviewInit config={livePreview} />
+        {children}
       </body>
     </html>
   )

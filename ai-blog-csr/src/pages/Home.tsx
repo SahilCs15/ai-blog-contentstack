@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getLandingPage, getList } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { LandingPage } from '../lib/types'
@@ -7,7 +7,7 @@ import type { AiTool, AiCategory, AiNews } from '../lib/hub-types'
 import { edit } from '../lib/cslp'
 import { imageUrl } from '../lib/format'
 import ToolCard from '../components/ToolCard'
-import { Loading, ErrorState, Empty } from '../components/States'
+import { Loading, ErrorState } from '../components/States'
 
 interface HomeData {
   page: LandingPage | null
@@ -18,12 +18,12 @@ interface HomeData {
 }
 
 export default function Home() {
-  const loader = useCallback(async (): Promise<HomeData> => {
+  const loader = useCallback(async (locale: string): Promise<HomeData> => {
     const [page, tools, categories, news] = await Promise.all([
-      getLandingPage(),
-      getList<AiTool>('ai_tool', { include: ['category', 'company'], limit: 6 }),
-      getList<AiCategory>('ai_category', { limit: 12 }),
-      getList<AiNews>('ai_news', { limit: 3 }),
+      getLandingPage(locale),
+      getList<AiTool>('ai_tool', { include: ['category', 'company'], limit: 6 }, locale),
+      getList<AiCategory>('ai_category', { limit: 12 }, locale),
+      getList<AiNews>('ai_news', { limit: 6 }, locale),
     ])
     return {
       page,
@@ -61,8 +61,9 @@ export default function Home() {
             {page?.hero_subheading || 'AI tools, models, companies, tutorials, news, and industry insights — curated for builders and the curious.'}
           </p>
           <div style={{ marginTop: 22, display: 'flex', gap: 12 }}>
-            <Link className="btn" to="/tools">Browse tools</Link>
-            <Link className="btn" to="/news" style={{ background: 'var(--surface-2)' }}>Latest news</Link>
+            {data?.tools.length ? <Link className="btn" to="/tools">Browse tools</Link> : null}
+            {data?.news.length ? <Link className="btn" to="/news" style={{ background: 'var(--surface-2)' }}>Latest news</Link> : null}
+            {!data?.tools.length && !data?.news.length ? <Link className="btn" to="/blog">Read the blog</Link> : null}
           </div>
         </div>
       </section>
@@ -76,48 +77,50 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="section">
-        <div className="section__head"><h2>Explore by category</h2></div>
-        <div className="filterbar">
-          {(data?.categories ?? []).map((c) => (
-            <Link key={c.uid} to="/tools" className="filter" style={{ ['--chip' as string]: c.accent_color || '#6366f1' }}>
-              {c.icon ? `${c.icon} ` : ''}{c.title}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section__head">
-          <h2>Featured tools</h2>
-          <p className="section__sub">Popular picks from the directory.</p>
-        </div>
-        {data?.tools.length ? (
-          <div className="grid grid--3">{data.tools.map((t) => <ToolCard tool={t} key={t.uid} />)}</div>
-        ) : (
-          <Empty title="Tools are being published" hint="Content is still seeding — check back shortly." />
-        )}
-      </section>
-
-      <section className="section">
-        <div className="section__head">
-          <h2>Latest news</h2>
-          <Link to="/news" className="backlink">View all →</Link>
-        </div>
-        <div className="grid grid--3">
-          {(data?.news ?? []).map((a) => (
-            <article className="post-card" key={a.uid}>
-              <Link to={`/news/${a.slug ?? a.uid}`} className="post-card__media">
-                {a.featured_image?.url ? <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading="lazy" /> : <div className="post-card__placeholder" />}
+      {data?.categories.length ? (
+        <section className="section">
+          <div className="section__head"><h2>Explore by category</h2></div>
+          <div className="filterbar">
+            {data.categories.map((c) => (
+              <Link key={c.uid} to="/tools" className="filter" style={{ ['--chip' as string]: c.accent_color || '#6366f1' }}>
+                {c.icon ? `${c.icon} ` : ''}{c.title}
               </Link>
-              <div className="post-card__body">
-                <h3 className="post-card__title"><Link to={`/news/${a.slug ?? a.uid}`} {...edit(a.$, 'title')}>{a.title}</Link></h3>
-                {a.excerpt && <p className="post-card__excerpt">{a.excerpt}</p>}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {data?.tools.length ? (
+        <section className="section">
+          <div className="section__head">
+            <h2>Featured tools</h2>
+            <p className="section__sub">Popular picks from the directory.</p>
+          </div>
+          <div className="grid grid--3">{data.tools.map((t) => <ToolCard tool={t} key={t.uid} />)}</div>
+        </section>
+      ) : null}
+
+      {data?.news.length ? (
+        <section className="section">
+          <div className="section__head">
+            <h2>Latest news</h2>
+            <Link to="/news" className="backlink">View all →</Link>
+          </div>
+          <div className="grid grid--3">
+            {data.news.map((a) => (
+              <article className="post-card" key={a.uid}>
+                <Link to={`/news/${a.slug ?? a.uid}`} className="post-card__media">
+                  {a.featured_image?.url ? <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading="lazy" /> : <div className="post-card__placeholder" />}
+                </Link>
+                <div className="post-card__body">
+                  <h3 className="post-card__title"><Link to={`/news/${a.slug ?? a.uid}`} {...edit(a.$, 'title')}>{a.title}</Link></h3>
+                  {a.excerpt && <p className="post-card__excerpt">{a.excerpt}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </>
   )
 }

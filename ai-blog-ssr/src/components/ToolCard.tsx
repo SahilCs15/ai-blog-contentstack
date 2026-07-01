@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/components/LocaleLink'
 import type { AiTool, AiCategory, AiCompany } from '@/lib/hub-types'
 import { one } from '@/lib/types'
 import { edit } from '@/lib/cslp'

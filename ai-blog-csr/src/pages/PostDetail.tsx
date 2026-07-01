@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getPostBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { BlogPost, Author, Category } from '../lib/types'
@@ -12,7 +13,7 @@ import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function PostDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getPostBySlug(slug), [slug])
+  const loader = useCallback((locale: string) => getPostBySlug(slug, locale), [slug])
   const { data: post, loading, error } = useEntry<BlogPost | null>(loader, [slug])
 
   useEffect(() => {

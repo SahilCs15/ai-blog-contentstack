@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { AiNews } from '../lib/hub-types'
@@ -10,7 +11,7 @@ import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function NewsDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<AiNews>('ai_news', slug, ['related_companies', 'category']), [slug])
+  const loader = useCallback((locale: string) => getBySlug<AiNews>('ai_news', slug, ['related_companies', 'category'], locale), [slug])
   const { data: article, loading, error } = useEntry<AiNews | null>(loader, [slug])
 
   if (loading && !article) return <Loading label="Loading article…" />

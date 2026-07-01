@@ -1,7 +1,15 @@
 node_modules
 dist
-.env
-.env.local
 *.log
 .DS_Store
-.vercel
+
+# secrets / local config — never commit (keep only .env.example)
+.env*
+!.env.example
+.vercel*
+
+# csdx import backups + logs (large / may contain content dumps)
+_backup_*
+logs/
+contentstack-cli-logs/
+*.bak

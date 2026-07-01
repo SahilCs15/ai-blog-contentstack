@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import type { AiTool, AiCategory, AiCompany } from '../lib/hub-types'
 import { one } from '../lib/types'
 import { edit } from '../lib/cslp'

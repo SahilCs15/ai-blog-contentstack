@@ -18,3 +18,11 @@ out/
 *.log
 *.tsbuildinfo
 .DS_Store
+
+# extra safety
+.env.*
+!.env.example
+.vercel*
+_backup_*
+contentstack-cli-logs/
+*.bak

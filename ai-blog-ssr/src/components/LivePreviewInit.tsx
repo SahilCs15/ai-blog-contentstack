@@ -9,17 +9,29 @@
 // the server components with the new hash.
 
 import { useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
-import { config } from '@/lib/config'
+import { usePathname, useRouter } from 'next/navigation'
+import { defaultLocale, localeFromPath, regionFromPath } from '@/lib/locale-client'
 
-export default function LivePreviewInit() {
+// Public, client-safe config for the active region (resolved server-side and
+// passed down — the delivery token is never included here).
+export interface LivePreviewConfig {
+  apiKey: string
+  environment: string
+  previewToken: string
+  previewHost: string
+  appHost: string
+}
+
+export default function LivePreviewInit({ config }: { config: LivePreviewConfig }) {
   const router = useRouter()
+  const pathname = usePathname()
   const started = useRef(false)
 
   useEffect(() => {
     if (started.current) return
     started.current = true
 
+    const pathLocale = localeFromPath(pathname) ?? defaultLocale
     let dispose = () => {}
 
     async function init() {
@@ -28,9 +40,13 @@ export default function LivePreviewInit() {
       ContentstackLivePreview.init({
         ssr: true,
         enable: true,
+        mode: 'builder',
         stackDetails: {
           apiKey: config.apiKey,
           environment: config.environment,
+          // Seed the SDK with the locale the page was loaded in so it does not
+          // fall back to its own default (en-us) and override the URL path.
+          locale: pathLocale,
         },
         clientUrlParams: {
           host: config.appHost,
@@ -38,10 +54,27 @@ export default function LivePreviewInit() {
         editButton: { enable: true },
       })
 
-      // Keep the live_preview hash in the URL so server fetches use it.
+      // The `/[locale]/` path is the source of truth for locale. Keep the
+      // live_preview hash in the URL for server fetches, and when the editor
+      // switches locale in the Visual Builder, navigate the path to the new
+      // locale rather than appending `?locale=` (which would fight the path).
       const syncHashThenRefresh = () => {
         const hash = (ContentstackLivePreview as unknown as { hash?: string }).hash
         const url = new URL(window.location.href)
+
+        const builderLocale = (ContentstackLivePreview as unknown as { config?: { stackDetails?: { locale?: string } } })
+          .config?.stackDetails?.locale
+        if (builderLocale && localeFromPath(url.pathname) !== builderLocale) {
+          // Path is `/{region}/{locale}/…`. Swap the locale segment, keep region.
+          const region = regionFromPath(url.pathname)
+          const segs = url.pathname.split('/').filter(Boolean)
+          const rest = segs.slice(region ? 2 : 1)
+          url.pathname = `/${region ? region + '/' : ''}${builderLocale}${rest.length ? '/' + rest.join('/') : ''}`
+          if (hash) url.searchParams.set('live_preview', hash)
+          router.replace(url.pathname + url.search)
+          return
+        }
+
         if (hash && url.searchParams.get('live_preview') !== hash) {
           url.searchParams.set('live_preview', hash)
           window.history.replaceState({}, '', url.toString())
@@ -54,7 +87,7 @@ export default function LivePreviewInit() {
 
     init()
     return () => dispose()
-  }, [router])
+  }, [router, pathname])
 
   return null
 }

@@ -7,10 +7,10 @@ import ToolCard from '../components/ToolCard'
 import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function Tools() {
-  const loader = useCallback(async () => {
+  const loader = useCallback(async (locale: string) => {
     const [tools, cats] = await Promise.all([
-      getList<AiTool>('ai_tool', { include: ['category', 'company'], limit: 100 }),
-      getList<AiCategory>('ai_category', { limit: 100 }),
+      getList<AiTool>('ai_tool', { include: ['category', 'company'], limit: 100 }, locale),
+      getList<AiCategory>('ai_category', { limit: 100 }, locale),
     ])
     return { tools: tools.items, total: tools.total, categories: cats.items }
   }, [])

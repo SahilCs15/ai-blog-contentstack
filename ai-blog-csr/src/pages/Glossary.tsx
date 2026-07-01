@@ -6,8 +6,8 @@ import { edit } from '../lib/cslp'
 import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function Glossary() {
-  const loader = useCallback(async () => {
-    const res = await getList<GlossaryTerm>('glossary_term', { limit: 400 })
+  const loader = useCallback(async (locale: string) => {
+    const res = await getList<GlossaryTerm>('glossary_term', { limit: 400 }, locale)
     return res.items
   }, [])
   const { data, loading, error } = useEntry<GlossaryTerm[]>(loader)

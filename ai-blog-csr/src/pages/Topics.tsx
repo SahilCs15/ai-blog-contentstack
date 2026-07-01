@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getAllCategories, getAllPosts } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { Category, BlogPost } from '../lib/types'
@@ -8,8 +8,8 @@ import { edit } from '../lib/cslp'
 import { Loading, ErrorState } from '../components/States'
 
 export default function Topics() {
-  const loader = useCallback(async () => {
-    const [categories, posts] = await Promise.all([getAllCategories(), getAllPosts()])
+  const loader = useCallback(async (locale: string) => {
+    const [categories, posts] = await Promise.all([getAllCategories(locale), getAllPosts(locale)])
     return { categories, posts }
   }, [])
   const { data, loading, error } = useEntry<{ categories: Category[]; posts: BlogPost[] }>(loader)

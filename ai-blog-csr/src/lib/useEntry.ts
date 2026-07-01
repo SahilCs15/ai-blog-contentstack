@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { onLivePreviewChange } from './contentstack'
+import { useLocale } from './useLocale'
 import { toCsError, type CsErrorDetail } from './cs-error'
 
 interface State<T> {
@@ -16,15 +17,21 @@ interface State<T> {
   error: CsErrorDetail | null
 }
 
-export function useEntry<T>(loader: () => Promise<T>, deps: unknown[] = []): State<T> {
+export function useEntry<T>(loader: (locale: string) => Promise<T>, deps: unknown[] = []): State<T> {
   const [state, setState] = useState<State<T>>({ data: null, loading: true, error: null })
   const loaderRef = useRef(loader)
   loaderRef.current = loader
 
+  // The active locale is the single source of truth: useEntry passes it INTO the
+  // loader and also keys the fetch on it, so a locale switch re-runs the loader
+  // with the new locale. Loaders no longer resolve the locale themselves.
+  const locale = useLocale()
+  const allDeps = [...deps, locale]
+
   const run = useCallback(async () => {
     setState((s) => ({ ...s, loading: true, error: null }))
     try {
-      const data = await loaderRef.current()
+      const data = await loaderRef.current(locale)
       setState({ data, loading: false, error: null })
     } catch (e) {
       // Loaders throw CsErrorDetail already; toCsError is a safety net for anything else.
@@ -34,7 +41,7 @@ export function useEntry<T>(loader: () => Promise<T>, deps: unknown[] = []): Sta
       setState({ data: null, loading: false, error: detail })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, allDeps)
 
   useEffect(() => {
     let fired = false
@@ -52,7 +59,7 @@ export function useEntry<T>(loader: () => Promise<T>, deps: unknown[] = []): Sta
       unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, allDeps)
 
   return state
 }

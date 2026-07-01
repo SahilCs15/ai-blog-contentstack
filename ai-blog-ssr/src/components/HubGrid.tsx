@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/components/LocaleLink'
 import type {
   AiTool, AiCategory, AiCompany, AiModel, Tutorial, Comparison, UseCase, IndustryReport, GlossaryTerm, AiNews,
 } from '@/lib/hub-types'

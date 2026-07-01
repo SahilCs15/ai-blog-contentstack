@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { AiTool, AiCategory, AiCompany } from '../lib/hub-types'
@@ -23,7 +24,7 @@ function List({ title, items, kind }: { title: string; items?: string[]; kind: '
 
 export default function ToolDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<AiTool>('ai_tool', slug, ['category', 'company']), [slug])
+  const loader = useCallback((locale: string) => getBySlug<AiTool>('ai_tool', slug, ['category', 'company'], locale), [slug])
   const { data: tool, loading, error } = useEntry<AiTool | null>(loader, [slug])
 
   if (loading && !tool) return <Loading label="Loading tool…" />

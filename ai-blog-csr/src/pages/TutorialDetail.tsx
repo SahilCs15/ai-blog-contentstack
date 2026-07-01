@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { Tutorial } from '../lib/hub-types'
@@ -8,7 +9,7 @@ import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function TutorialDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<Tutorial>('tutorial', slug, ['category']), [slug])
+  const loader = useCallback((locale: string) => getBySlug<Tutorial>('tutorial', slug, ['category'], locale), [slug])
   const { data: t, loading, error } = useEntry<Tutorial | null>(loader, [slug])
 
   if (loading && !t) return <Loading label="Loading tutorial…" />

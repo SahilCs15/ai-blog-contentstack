@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { Comparison } from '../lib/hub-types'
@@ -8,7 +9,7 @@ import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function ComparisonDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<Comparison>('comparison', slug), [slug])
+  const loader = useCallback((locale: string) => getBySlug<Comparison>('comparison', slug, undefined, locale), [slug])
   const { data: c, loading, error } = useEntry<Comparison | null>(loader, [slug])
 
   if (loading && !c) return <Loading label="Loading comparison…" />

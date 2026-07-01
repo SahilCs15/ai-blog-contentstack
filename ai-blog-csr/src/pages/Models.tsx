@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import Catalog from '../components/Catalog'
 import type { AiModel, AiCompany } from '../lib/hub-types'
 import { one } from '../lib/types'

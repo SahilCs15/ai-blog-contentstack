@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getList } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { AiNews } from '../lib/hub-types'
@@ -10,8 +10,8 @@ import { Loading, ErrorState, Empty } from '../components/States'
 const PAGE = 24
 
 export default function News() {
-  const loader = useCallback(async () => {
-    const res = await getList<AiNews>('ai_news', { limit: 500 })
+  const loader = useCallback(async (locale: string) => {
+    const res = await getList<AiNews>('ai_news', { limit: 500 }, locale)
     return res.items
   }, [])
   const { data, loading, error } = useEntry<AiNews[]>(loader)

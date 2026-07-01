@@ -7,8 +7,8 @@ import PostCard from '../components/PostCard'
 import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function BlogList() {
-  const loader = useCallback(async () => {
-    const [posts, categories] = await Promise.all([getAllPosts(), getAllCategories()])
+  const loader = useCallback(async (locale: string) => {
+    const [posts, categories] = await Promise.all([getAllPosts(locale), getAllCategories(locale)])
     return { posts, categories }
   }, [])
   const { data, loading, error } = useEntry<{ posts: BlogPost[]; categories: Category[] }>(loader)

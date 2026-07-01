@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { IndustryReport } from '../lib/hub-types'
@@ -19,7 +20,7 @@ function Section({ title, items }: { title: string; items?: string[] }) {
 
 export default function ReportDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<IndustryReport>('industry_report', slug), [slug])
+  const loader = useCallback((locale: string) => getBySlug<IndustryReport>('industry_report', slug, undefined, locale), [slug])
   const { data: r, loading, error } = useEntry<IndustryReport | null>(loader, [slug])
 
   if (loading && !r) return <Loading label="Loading report…" />

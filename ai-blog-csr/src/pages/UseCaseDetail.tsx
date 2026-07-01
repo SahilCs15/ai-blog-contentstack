@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/LocaleLink'
 import { getBySlug } from '../lib/contentstack'
 import { useEntry } from '../lib/useEntry'
 import type { UseCase } from '../lib/hub-types'
@@ -8,7 +9,7 @@ import { Loading, ErrorState, Empty } from '../components/States'
 
 export default function UseCaseDetail() {
   const { slug = '' } = useParams()
-  const loader = useCallback(() => getBySlug<UseCase>('use_case', slug), [slug])
+  const loader = useCallback((locale: string) => getBySlug<UseCase>('use_case', slug, undefined, locale), [slug])
   const { data: u, loading, error } = useEntry<UseCase | null>(loader, [slug])
 
   if (loading && !u) return <Loading label="Loading use case…" />
