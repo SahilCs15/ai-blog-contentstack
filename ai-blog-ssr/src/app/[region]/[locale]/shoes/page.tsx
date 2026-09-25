@@ -11,6 +11,7 @@ import { VB_EmptyBlockParentClass } from '@contentstack/live-preview-utils'
 import { imgLoading } from '@/lib/img'
 import { imageUrl, formatDate } from '@/lib/format'
 import { Rte } from '@/lib/rte'
+import '../../../shoestore.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,11 +30,6 @@ const StarIcon = ({ className }: IProps) => (
 const ArrowIcon = ({ className }: IProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M5 12h14M13 6l6 6-6 6" />
-  </svg>
-)
-const BagIcon = ({ className }: IProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M6 7h12l-1 13H7L6 7zM9 7a3 3 0 0 1 6 0" />
   </svg>
 )
 const SearchIcon = ({ className }: IProps) => (
@@ -74,6 +70,21 @@ const CheckIcon = ({ className }: IProps) => (
 const PinIcon = ({ className }: IProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z" /><circle cx="12" cy="10" r="2.6" />
+  </svg>
+)
+const CartIcon = ({ className }: IProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6.2" /><circle cx="9" cy="19" r="1.4" /><circle cx="17" cy="19" r="1.4" />
+  </svg>
+)
+const UserIcon = ({ className }: IProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+  </svg>
+)
+const LogoMark = ({ className }: IProps) => (
+  <svg className={className} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M24 8.5H12.5a4.5 4.5 0 0 0 0 9h7a4.5 4.5 0 0 1 0 9H8" />
   </svg>
 )
 const PROMISE_ICONS = [<TruckIcon key="t" />, <ReturnIcon key="r" />, <ShieldIcon key="s" />, <MedalIcon key="m" />]
@@ -172,25 +183,21 @@ function ShoeCard({ shoe, instanceTag }: { shoe: Shoe; instanceTag?: EditTag }) 
         ) : (
           <div className="ss-card__placeholder" aria-hidden="true" />
         )}
-        {typeof shoe.rating === 'number' ? (
-          <span className="ss-card__ratepill" {...edit(shoe.$, 'rating')}><StarIcon /> <span className="ss-num">{shoe.rating.toFixed(1)}</span></span>
-        ) : null}
       </div>
       <div className="ss-card__body">
+        {typeof shoe.rating === 'number' ? (
+          <span className="ss-card__ratepill" {...edit(shoe.$, 'rating')}>
+            <StarIcon /> <span className="ss-num">({shoe.rating.toFixed(1)} rating)</span>
+          </span>
+        ) : null}
         <h3 className="ss-card__name" {...edit(shoe.$, 'title')}>{shoe.title}</h3>
-        <div className="ss-card__swatches" aria-hidden="true">
-          <span style={{ ['--sw' as string]: accent }} />
-          <span style={{ ['--sw' as string]: '#20232b' }} />
-          <span style={{ ['--sw' as string]: '#e9e9ee' }} />
-        </div>
         <div className="ss-card__foot">
           <div className="ss-card__pricewrap">
-            <span className="ss-card__plabel">Price</span>
             <span className="ss-card__price ss-num" {...edit(shoe.$, 'price')}>
               ${typeof shoe.price === 'number' ? shoe.price.toFixed(2) : shoe.price}
             </span>
           </div>
-          <button type="button" className="ss-card__add"><BagIcon /> Add to bag</button>
+          <button type="button" className="ss-card__add" aria-label={`Add ${shoe.title} to cart`}><CartIcon /></button>
         </div>
       </div>
     </article>
@@ -337,8 +344,8 @@ function PromoBlocks({ page }: { page: ShoeLanding }) {
   return (
     <section className="ss-promo" id="promo">
       <div className="ss-section-head">
-        <span className="ss-eyebrow">Promo</span>
-        <h2>Promo blocks</h2>
+        <span className="ss-eyebrow">Members</span>
+        <h2>Why runners join</h2>
       </div>
       {/* VB_EmptyBlockParentClass makes the canvas hydrate its own placeholder and
           add button into this element while the field has no blocks. */}
@@ -358,7 +365,7 @@ function PromoBlocks({ page }: { page: ShoeLanding }) {
               <>
                 <span className="ss-promo__label" {...edit(b.promo_stat.$, 'label')}>{slot(b.promo_stat.label)}</span>
                 <b className="ss-num" {...edit(b.promo_stat.$, 'value')}>
-                  {typeof b.promo_stat.value === 'number' ? b.promo_stat.value : slot(undefined)}
+                  {typeof b.promo_stat.value === 'number' ? b.promo_stat.value.toLocaleString('en-US') : slot(undefined)}
                 </b>
               </>
             ) : null}
@@ -379,14 +386,36 @@ function Spotlight({ page }: { page: ShoeLanding }) {
         <span className="ss-eyebrow">Editor&rsquo;s pick</span>
         <h2>One pair we keep coming back to</h2>
       </div>
-      <div className="ss-spotlight__inner">
-        <ShoeCard shoe={shoe} />
-        <div className="ss-spotlight__note">
-          {shoe.short_description ? <p {...edit(shoe.$, 'short_description')}>{shoe.short_description}</p> : null}
-          {typeof shoe.rating === 'number' ? <Stars rating={shoe.rating} /> : null}
+      <PickFeature shoe={shoe} blurbTag />
+    </section>
+  )
+}
+
+/* Card plus a copy panel. The panel repeats the title and price untagged, so
+   the card stays the single editable source for those fields. */
+function PickFeature({ shoe, blurbTag }: { shoe: Shoe; blurbTag?: boolean }) {
+  return (
+    <div className="ss-spotlight__inner">
+      <ShoeCard shoe={shoe} />
+      <div className="ss-spotlight__note">
+        <h3 className="ss-spotlight__title">{shoe.title}</h3>
+        {shoe.short_description ? (
+          <p {...(blurbTag ? edit(shoe.$, 'short_description') : {})}>{shoe.short_description}</p>
+        ) : null}
+        {typeof shoe.rating === 'number' ? (
+          <span className="ss-spotlight__rate"><Stars rating={shoe.rating} /> <b className="ss-num">{shoe.rating.toFixed(1)}</b> from verified buyers</span>
+        ) : null}
+        <ul className="ss-spotlight__perks">
+          <li><CheckIcon /> Free express delivery</li>
+          <li><CheckIcon /> 30-day wear test</li>
+          <li><CheckIcon /> 2-year warranty</li>
+        </ul>
+        <div className="ss-spotlight__buy">
+          {typeof shoe.price === 'number' ? <span className="ss-spotlight__price ss-num">${shoe.price.toFixed(2)}</span> : null}
+          <a className="ss-btn" href="#products">Shop this pair <ArrowIcon /></a>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -517,9 +546,13 @@ function CounterExtras({ page }: { page: ShoeLanding }) {
     <section className="ss-counter" id="counter">
       {pick?.title ? (
         <div className="ss-counter__pick" {...edit(info.$, 'staff_pick')}>
-          <span className="ss-guide__label">Staff pick at the counter</span>
-          <ShoeCard shoe={pick} />
+          <div className="ss-section-head">
+            <span className="ss-eyebrow">In store</span>
+            <h2>Staff pick at the counter</h2>
+          </div>
+          <PickFeature shoe={pick} />
         </div>
+
       ) : null}
       {info.counter_promise ? (
         <PromiseGrid bp={info.counter_promise} tag={edit(info.$, 'counter_promise')} className="ss-promise--alt" />
@@ -697,11 +730,28 @@ function RelatedProducts({ shoes, containerTag, instanceTag }: { shoes?: Shoe[];
   )
 }
 
-function heroHeading(t?: string, hl?: string, tag?: EditTag) {
+// Draws the first "o" as an outlined pill. The letter stays in the DOM so the
+// heading text, copy/paste and the edit tag are unchanged.
+function pillify(text: string): ReactNode {
+  const i = text.search(/o/i)
+  if (i < 0) return text
+  const start = text.lastIndexOf(' ', i) + 1
+  const endAt = text.indexOf(' ', i)
+  const end = endAt < 0 ? text.length : endAt
+  return (
+    <>
+      {text.slice(0, start)}
+      <span className="ss-pillword">{text.slice(start, i)}<span className="ss-pill">{text[i]}</span>{text.slice(i + 1, end)}</span>
+      {text.slice(end)}
+    </>
+  )
+}
+
+function heroHeading(t?: string, hl?: string, tag?: EditTag): ReactNode {
   const text = t ?? ''
-  if (!hl || !text.includes(hl)) return text
+  if (!hl || !text.includes(hl)) return pillify(text)
   const [b, a] = text.split(hl)
-  return (<>{b}<span className="ss-accent" {...(tag ?? {})}>{hl}</span>{a}</>)
+  return (<>{pillify(b)}<span className="ss-accent" {...(tag ?? {})}>{hl}</span>{a}</>)
 }
 
 export default async function ShoeStorePage({ params, searchParams }: Props) {
@@ -734,7 +784,7 @@ export default async function ShoeStorePage({ params, searchParams }: Props) {
     .filter((x): x is { data: FaqBlock; sectionTag: EditTag } => !!x)
 
   return (
-    <div className="shoestore">
+    <div className="shoestore ss2">
       {(page.free_shipping || page.drop_date || page.collection) && (
         <div className="ss-ticker">
           {page.free_shipping ? <span {...edit(page.$, 'free_shipping')}><TruckIcon /> Free express shipping on every order</span> : null}
@@ -745,7 +795,7 @@ export default async function ShoeStorePage({ params, searchParams }: Props) {
 
       <header className="ss-nav">
         <div className="ss-nav__inner">
-          <a className="ss-nav__brand" href="#top"><span className="ss-nav__mark"><BagIcon /></span><span {...edit(page.$, 'brand_name')}>{slot(brand)}</span></a>
+          <a className="ss-nav__brand" href="#top"><span className="ss-nav__mark"><LogoMark /></span><span {...edit(page.$, 'brand_name')}>{slot(brand)}</span></a>
           <nav className="ss-nav__links" {...(page.nav_links ? editField(page, 'nav_links') : {})}>
             {navLinks.map((n, i) => (
               // The instance tag goes on the wrapper so Visual Builder selects THIS
@@ -757,8 +807,8 @@ export default async function ShoeStorePage({ params, searchParams }: Props) {
           </nav>
           <div className="ss-nav__right">
             <button type="button" className="ss-icon-btn" aria-label="Search"><SearchIcon /></button>
-            <button type="button" className="ss-icon-btn" aria-label="Cart"><BagIcon /></button>
-            <a className="ss-nav__cta" href="#newsletter">Get in touch</a>
+            <button type="button" className="ss-icon-btn" aria-label="Cart"><CartIcon /></button>
+            <a className="ss-icon-btn" href="#newsletter" aria-label="Account"><UserIcon /></a>
           </div>
         </div>
       </header>
@@ -768,46 +818,44 @@ export default async function ShoeStorePage({ params, searchParams }: Props) {
           <span className="ss-kicker">
             <b {...edit(page.$, 'collection')}>{slot(page.collection)}</b> {page.drop_date ? `drop lands ${formatDate(page.drop_date)}` : null}
           </span>
-          <h1 className="ss-hero__heading" {...edit(page.$, 'hero_heading')}>{heroHeading(page.hero_heading, page.hero_highlight, edit(page.$, 'hero_highlight'))}</h1>
-          <p className="ss-hero__sub" {...edit(page.$, 'hero_subtext')}>{page.hero_subtext}</p>
-          {page.usp_chips ? (
-            <ul className="ss-usps" {...editField(page, 'usp_chips')}>
-              {page.usp_chips.map((u, i) => <li key={i} {...edit(page.$, `usp_chips__${i}`)}><CheckIcon /> {slot(u)}</li>)}
-            </ul>
-          ) : null}
-          <div className="ss-hero__actions">
+          <h1 className="ss-hero__heading" {...edit(page.$, 'hero_heading')}>
+            {heroHeading(page.hero_heading, page.hero_highlight, edit(page.$, 'hero_highlight'))}
+          </h1>
+          <div className="ss-hero__row">
+            <p className="ss-hero__sub" {...edit(page.$, 'hero_subtext')}>{page.hero_subtext}</p>
             <a className="ss-btn" href="#products"><span {...edit(page.$, 'hero_cta_label')}>{slot(page.hero_cta_label)}</span></a>
-            <a className="ss-btn ss-btn--ghost" href="#products">Explore collection</a>
           </div>
           <div className="ss-hero__stat">
-            <div className="ss-hero__ratewrap">
-              <span className="ss-hero__stars"><Stars rating={5} /></span>
-              <span className="ss-hero__substat"><b className="ss-num">4.9</b> average rating</span>
-            </div>
-            <span className="ss-hero__divider" />
-            {(page.stat_value || page.stat_label) && (
-              <div className="ss-hero__ratewrap">
+            <span className="ss-hero__dots" aria-hidden="true"><i /><i /><i /></span>
+            {(page.stat_value || page.stat_label) ? (
+              <span className="ss-hero__ratewrap">
                 <b className="ss-num" {...edit(page.$, 'stat_value')}>{page.stat_value}</b>
                 <span className="ss-hero__substat" {...edit(page.$, 'stat_label')}>{page.stat_label}</span>
-              </div>
-            )}
-            {typeof page.products_in_stock === 'number' && (
-              <>
-                <span className="ss-hero__divider" />
-                <div className="ss-hero__ratewrap">
-                  <b className="ss-num" {...edit(page.$, 'products_in_stock')}>{page.products_in_stock}</b>
-                  <span className="ss-hero__substat">styles in stock</span>
-                </div>
-              </>
-            )}
+              </span>
+            ) : null}
+            {typeof page.products_in_stock === 'number' ? (
+              <span className="ss-hero__ratewrap">
+                <b className="ss-num" {...edit(page.$, 'products_in_stock')}>{page.products_in_stock}</b>
+                <span className="ss-hero__substat">styles in stock</span>
+              </span>
+            ) : null}
           </div>
+          <svg className="ss-hero__swirl" viewBox="0 0 220 90" fill="none" aria-hidden="true">
+            <path d="M4 80C40 70 70 52 96 40c30-14 38-34 20-36-20-2-24 30 4 40 26 9 60-2 92-30M200 10l12 4-6 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
         </div>
         <div className="ss-hero__media">
+          <span className="ss-hero__disc" aria-hidden="true" />
           {page.promo_label ? <span className="ss-hero__promo" {...edit(page.$, 'promo_label')}>{page.promo_label}</span> : null}
           {page.hero_image?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={imageUrl(page.hero_image.url, 1000)} alt={page.hero_heading ?? ''} {...edit(page.hero_image.$, 'url')} />
           ) : <div className="ss-hero__placeholder" aria-hidden="true" />}
+          {page.usp_chips ? (
+            <ul className="ss-usps" {...editField(page, 'usp_chips')}>
+              {page.usp_chips.map((u, i) => <li key={i} {...edit(page.$, `usp_chips__${i}`)}><i aria-hidden="true" />{slot(u)}</li>)}
+            </ul>
+          ) : null}
         </div>
       </section>
 
@@ -819,7 +867,7 @@ export default async function ShoeStorePage({ params, searchParams }: Props) {
 
       <section className="ss-products" id="products">
         <div className="ss-section-head">
-          <div><span className="ss-eyebrow">Bestsellers</span><h2>Popular Products</h2></div>
+          <div><span className="ss-eyebrow">Bestsellers</span><h2>Trending Products</h2></div>
           <p>Handpicked drops loved by our community.</p>
         </div>
         {page.available_sizes ? (
