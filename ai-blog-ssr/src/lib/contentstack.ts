@@ -13,13 +13,14 @@ import contentstack, {
   Region,
   QueryOperation,
   type LivePreviewQuery,
+  type ContentstackPlugin,
 } from '@contentstack/delivery-sdk'
 import { addEditableTags } from '@contentstack/utils'
 import { getConfig } from './config'
 import { getRegion } from './region-server'
 import { defaultLocale } from './locale'
 import { toCsError, asThrowable } from './cs-error'
-import type { BlogPost, LandingPage, Author, Category } from './types'
+import type { BlogPost, LandingPage, Author, Category, ShoeLanding } from './types'
 
 /** Context attached to every error so the on-page error card shows where it failed. */
 function ctx(region: string, extra: Record<string, string | undefined> = {}): Record<string, string | undefined> {
@@ -36,6 +37,40 @@ function ctx(region: string, extra: Record<string, string | undefined> = {}): Re
   }
 }
 
+// A bare hostname (cdn.contentstack.io, dev11-cdn.csnonprod.com) goes through
+// the SDK's host builder, which forms `https://<host>:443/v3`. A self-hosted
+// host that already carries a port and/or path (localhost:8081/api) can't: the
+// builder would inject the port mid-string → `https://localhost:8081/api:443/v3`
+// (404). For those, pass a full `endpoint` (baseURL) so the builder is bypassed.
+// The preview host is applied separately (string-concatenated), so it is
+// unaffected either way.
+function cdnHostConfig(cdnHost: string): { host: string } | { endpoint: string } {
+  return /[:/]/.test(cdnHost) ? { endpoint: `https://${cdnHost}/v3` } : { host: cdnHost }
+}
+
+/**
+ * Ask the Preview Service to serve auto-draft content.
+ *
+ * Its draft interceptor decides per request:
+ *   isDraftEligibleTracker = header === 'true' || ctx.type === TrackerTypes.livePreview
+ * Visual Builder is its own tracker type, so it is NOT draft-eligible by default
+ * and the canvas silently renders published content. This header is the opt-in
+ * for any tracker, and only goes out when a preview hash is in play.
+ */
+const DRAFT_PREVIEW_HEADER = 'x-cs-preview-enable-entry-draft'
+
+class DraftPreviewPlugin implements ContentstackPlugin {
+  onRequest(reqConfig: any): any {
+    const target = [reqConfig?.baseURL, reqConfig?.url, reqConfig?.host].filter(Boolean).join(' ')
+    const params = reqConfig?.params ?? {}
+    if (!/preview/i.test(target) && !params.live_preview) return reqConfig
+    return { ...reqConfig, headers: { ...(reqConfig?.headers ?? {}), [DRAFT_PREVIEW_HEADER]: 'true' } }
+  }
+  onResponse(_request: any, response: any, _data: any): any {
+    return response
+  }
+}
+
 function buildStack(region: string, livePreviewHash?: string) {
   const config = getConfig(region)
   const stack = contentstack.stack({
@@ -43,12 +78,13 @@ function buildStack(region: string, livePreviewHash?: string) {
     deliveryToken: config.deliveryToken,
     environment: config.environment,
     region: Region.US,
-    host: config.cdnHost,
+    ...cdnHostConfig(config.cdnHost),
     live_preview: {
       enable: true,
       preview_token: config.previewToken,
       host: config.previewHost,
     },
+    plugins: [new DraftPreviewPlugin()],
   })
   if (livePreviewHash) {
     stack.livePreviewQuery({ live_preview: livePreviewHash } as LivePreviewQuery)
@@ -66,15 +102,33 @@ function tagify<T>(entry: T, contentTypeUid: string, locale: string): T {
   return entry
 }
 
+// A self-hosted delivery API may not support include[] (reference resolution):
+// it rejects any include with error 141 ("is not a valid reference"). When that
+// happens, retry the same query once with includes off — references then stay
+// as { uid, _content_type_uid } pointers, which the renderers already tolerate.
+// Real clusters resolve includes, so the retry never fires there.
+function isIncludeUnsupported(e: unknown): boolean {
+  return (e as { error_code?: number } | null)?.error_code === 141
+}
+
+async function withIncludeFallback<T>(run: (includes: boolean) => Promise<T>): Promise<T> {
+  try {
+    return await run(true)
+  } catch (e) {
+    if (isIncludeUnsupported(e)) return run(false)
+    throw e
+  }
+}
+
 export async function getLandingPage(lp?: string, locale: string = defaultLocale): Promise<LandingPage | null> {
   const region = await getRegion()
   try {
-    const res = await buildStack(region, lp)
-      .contentType('page')
-      .entry()
-      .locale(locale)
-      .includeReference(...INCLUDE_PAGE)
-      .find<LandingPage>()
+    const stack = buildStack(region, lp)
+    const res = await withIncludeFallback<{ entries?: LandingPage[] }>((inc) => {
+      let q: any = stack.contentType('page').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_PAGE)
+      return q.find()
+    })
     const page = res.entries?.[0]
     return page ? tagify(page, 'page', locale) : null
   } catch (e) {
@@ -82,15 +136,49 @@ export async function getLandingPage(lp?: string, locale: string = defaultLocale
   }
 }
 
+const INCLUDE_SHOE_LANDING = [
+  'featured_shoes',
+  'related_products',
+  'spotlight_shoe',
+  'store_info.staff_pick',
+  'sections.nested_showcase.linked_shoe',
+  'sections.nested_showcase.linked_reads',
+] as const
+
+/**
+ * The preview API returns `null` for every file field, so nothing inside Visual Builder
+ * renders an image. Refetch without the preview hash and copy the asset values back in
+ * wherever preview left a hole. Image edits therefore preview as the published asset,
+ * which is the trade for having any image at all.
+ */
+export async function getShoeLanding(lp?: string, locale: string = defaultLocale): Promise<ShoeLanding | null> {
+  const region = await getRegion()
+  try {
+    const stack = buildStack(region, lp)
+    const res = await withIncludeFallback<{ entries?: ShoeLanding[] }>((inc) => {
+      let q: any = stack.contentType('shoe_landing').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_SHOE_LANDING)
+      // Cache-version param: bump when the shoe content changes so the delivery CDN
+      // serves a fresh response instead of a long-lived stale cache of this query URL.
+      q = q.addParams({ _cv: '4' })
+      return q.find()
+    })
+    const page = res.entries?.[0]
+    return page ? tagify(page, 'shoe_landing', locale) : null
+  } catch (e) {
+    throw asThrowable(toCsError(e, ctx(region, { contentType: 'shoe_landing', operation: 'get shoe landing', locale })))
+  }
+}
+
 export async function getAllPosts(lp?: string, locale: string = defaultLocale): Promise<BlogPost[]> {
   const region = await getRegion()
   try {
-    const res = await buildStack(region, lp)
-      .contentType('blog_post')
-      .entry()
-      .locale(locale)
-      .includeReference(...INCLUDE_POST)
-      .find<BlogPost>()
+    const stack = buildStack(region, lp)
+    const res = await withIncludeFallback<{ entries?: BlogPost[] }>((inc) => {
+      let q: any = stack.contentType('blog_post').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_POST)
+      return q.find()
+    })
     return (res.entries ?? []).map((e) => tagify(e, 'blog_post', locale))
   } catch (e) {
     throw asThrowable(toCsError(e, ctx(region, { contentType: 'blog_post', operation: 'list posts', locale })))
@@ -99,14 +187,12 @@ export async function getAllPosts(lp?: string, locale: string = defaultLocale): 
 
 export async function getPostBySlug(slug: string, lp?: string, locale: string = defaultLocale): Promise<BlogPost | null> {
   const region = await getRegion()
-  const res = await buildStack(region, lp)
-    .contentType('blog_post')
-    .entry()
-    .locale(locale)
-    .includeReference(...INCLUDE_POST)
-    .query()
-    .where('slug', QueryOperation.EQUALS, slug)
-    .find<BlogPost>()
+  const stack = buildStack(region, lp)
+  const res = await withIncludeFallback<{ entries?: BlogPost[] }>((inc) => {
+    let q: any = stack.contentType('blog_post').entry().locale(locale)
+    if (inc) q = q.includeReference(...INCLUDE_POST)
+    return q.query().where('slug', QueryOperation.EQUALS, slug).find()
+  })
   const post = res.entries?.[0]
   return post ? tagify(post, 'blog_post', locale) : null
 }
@@ -137,10 +223,13 @@ export async function getList<T>(
 ): Promise<{ items: T[]; total: number }> {
   const region = await getRegion()
   try {
-    let q: any = buildStack(region, lp).contentType(ct).entry().locale(locale).includeCount()
-    if (opts.include?.length) q = q.includeReference(...opts.include)
-    if (opts.limit) q = q.limit(opts.limit)
-    const res = (await q.find()) as FindResult<T>
+    const stack = buildStack(region, lp)
+    const res = (await withIncludeFallback((inc) => {
+      let q: any = stack.contentType(ct).entry().locale(locale).includeCount()
+      if (inc && opts.include?.length) q = q.includeReference(...opts.include)
+      if (opts.limit) q = q.limit(opts.limit)
+      return q.find()
+    })) as FindResult<T>
     const items = (res.entries ?? []).map((e) => tagify(e, ct, locale))
     return { items, total: res.count ?? items.length }
   } catch (e) {
@@ -244,14 +333,11 @@ export async function getAllFieldsEntries(
   const region = await getRegion()
   try {
     const stack = buildStack(region, lp)
-    const res = await stack
-      .contentType(ct)
-      .entry()
-      .locale(locale)
-      .includeReference(...ALL_FIELDS_INCLUDE)
-      .query()
-      .where('url', QueryOperation.EQUALS, url)
-      .find<Record<string, unknown>>()
+    const res = await withIncludeFallback<{ entries?: Record<string, unknown>[] }>((inc) => {
+      let q: any = stack.contentType(ct).entry().locale(locale)
+      if (inc) q = q.includeReference(...ALL_FIELDS_INCLUDE)
+      return q.query().where('url', QueryOperation.EQUALS, url).find()
+    })
     const entries = (res.entries ?? []).map((e) => tagify(e, ct, locale))
     await Promise.all(entries.map((e) => resolveJsonRteEmbeds(e, stack, locale)))
     return entries
@@ -269,10 +355,12 @@ export async function getBySlug<T>(
 ): Promise<T | null> {
   const region = await getRegion()
   try {
-    let q: any = buildStack(region, lp).contentType(ct).entry().locale(locale)
-    if (include.length) q = q.includeReference(...include)
-    q = q.query().where('slug', QueryOperation.EQUALS, slug)
-    const res = (await q.find()) as FindResult<T>
+    const stack = buildStack(region, lp)
+    const res = (await withIncludeFallback((inc) => {
+      let q: any = stack.contentType(ct).entry().locale(locale)
+      if (inc && include.length) q = q.includeReference(...include)
+      return q.query().where('slug', QueryOperation.EQUALS, slug).find()
+    })) as FindResult<T>
     const entry = res.entries?.[0]
     return entry ? tagify(entry, ct, locale) : null
   } catch (e) {

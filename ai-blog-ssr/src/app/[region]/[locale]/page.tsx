@@ -5,6 +5,7 @@ import { resolveLocale } from '@/lib/locale'
 import { edit } from '@/lib/cslp'
 import { imageUrl } from '@/lib/format'
 import ToolCard from '@/components/ToolCard'
+import { imgLoading } from '@/lib/img'
 
 export const dynamic = 'force-dynamic'
 
@@ -99,7 +100,7 @@ export default async function HomePage({ params, searchParams }: Props) {
                 <Link href={`/news/${a.slug ?? a.uid}`} className="post-card__media">
                   {a.featured_image?.url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading="lazy" />
+                    <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading={imgLoading()} />
                   ) : <div className="post-card__placeholder" />}
                 </Link>
                 <div className="post-card__body">

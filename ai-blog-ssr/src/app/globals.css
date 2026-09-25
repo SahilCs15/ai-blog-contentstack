@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap');
+
 /* ============================================================
    Synapse — AI technology journal. Shared theme for the CSR app.
    Editorial, modern, responsive. Single stylesheet, no framework.
@@ -224,6 +226,82 @@ img { display: block; max-width: 100%; }
 .footer__muted { color: var(--text-faint); }
 
 /* ---------------- Responsive ---------------- */
+/* ---- spotlight (single reference) ---- */
+.ss-spotlight__inner { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 24px; align-items: center; }
+.ss-spotlight__note { display: flex; flex-direction: column; gap: 14px; }
+.ss-spotlight__note p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ss-muted); }
+
+/* ---- price tiers (multiple number + multiple boolean) ---- */
+.ss-tiers .ss-section-head { justify-content: center; text-align: center; flex-direction: column; align-items: center; margin-bottom: 26px; }
+.ss-tiers__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.ss-tier {
+  display: flex; flex-direction: column; gap: 6px; align-items: center; padding: 22px 16px;
+  border-radius: 16px; background: var(--ss-surface); border: 1px solid var(--ss-line);
+}
+.ss-tier__price { font-family: var(--ss-display); font-size: 26px; font-weight: 700; }
+.ss-tier__stock { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ss-accent); }
+.ss-tier--out { opacity: 0.62; }
+.ss-tier--out .ss-tier__stock { color: var(--ss-muted); }
+
+/* ---- restock dates (multiple date) + retailers (multiple link) ---- */
+.ss-restock__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.ss-datelist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ss-datelist li { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 600; }
+.ss-datelist svg { width: 15px; height: 15px; color: var(--ss-accent); flex: none; }
+.ss-linkrow { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* ---- shipping notes (multiple multiline) + materials (multiple markdown) ---- */
+.ss-notes__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ss-note {
+  display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 16px;
+  background: var(--ss-surface); border: 1px solid var(--ss-line);
+}
+.ss-note svg { width: 20px; height: 20px; color: var(--ss-accent); flex: none; }
+.ss-note__body { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ss-muted); white-space: pre-line; }
+.ss-note--md { font-size: 14px; }
+
+/* ---- campaign copy (multiple RTE) + press notes (multiple JSON RTE) ---- */
+.ss-press__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.ss-press__card { padding: 26px; border-radius: 18px; background: var(--ss-surface); border: 1px solid var(--ss-line); }
+
+/* ---- repeatable promise sections (multiple global field) ---- */
+.ss-promise--alt .ss-promise__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* ---- counter extras: reference + global field inside a group ---- */
+.ss-counter { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.ss-counter .ss-promise { padding-top: 0; }
+
+/* ---- nested showcase block (blocks inside a block) ---- */
+.ss-showcase { border-radius: 22px; }
+.ss-showcase--dark { background: #14161c; color: #f6f6f8; padding: clamp(28px, 5vw, 52px); margin-top: clamp(44px, 7vw, 84px); }
+.ss-showcase--accent { background: var(--ss-accent-weak); padding: clamp(28px, 5vw, 52px); margin-top: clamp(44px, 7vw, 84px); }
+.ss-showcase .ss-eyebrow { text-transform: capitalize; }
+.ss-showcase__detail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 22px; }
+.ss-showcase__detail b { font-family: var(--ss-display); font-size: 24px; }
+.ss-showcase__note { margin: 0; flex: 1 1 260px; font-size: 14px; color: var(--ss-muted); }
+.ss-showcase__panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ss-panel {
+  display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 16px;
+  background: var(--ss-surface); border: 1px solid var(--ss-line);
+}
+.ss-panel h3 { margin: 0; font-family: var(--ss-display); font-size: 17px; }
+.ss-panel p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ss-muted); }
+.ss-panel img { width: 100%; border-radius: 12px; object-fit: cover; aspect-ratio: 4 / 3; }
+.ss-showcase__stills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+.ss-showcase__stills figure { margin: 0; }
+.ss-showcase__stills img { width: 100%; border-radius: 14px; object-fit: cover; aspect-ratio: 1 / 1; }
+.ss-showcase__links { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 24px; margin-top: 22px; align-items: start; }
+.ss-readlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ss-readlist li { display: flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: 600; }
+.ss-readlist small { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ss-muted); font-weight: 600; }
+
+/* ---- geo group nested inside the store info group ---- */
+.ss-store__geo { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; font-size: 13px; color: var(--ss-muted); }
+.ss-store__coords { font-variant-numeric: tabular-nums; }
+
+/* ---- collection + region extension codes ---- */
+.ss-collcode span + span { margin-left: 14px; }
+
 @media (max-width: 900px) {
   .grid--3 { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: 1fr; }
@@ -464,3 +542,998 @@ img { display: block; max-width: 100%; }
 .gallery__title { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
 @media (max-width: 860px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .gallery { grid-template-columns: 1fr; } }
+
+/* ============================ Shoe store (dark, self-contained) ============================ */
+.shoestore {
+  --ss-bg: #0c0d11;
+  --ss-surface: #15171e;
+  --ss-surface-2: #1c1f28;
+  --ss-text: #f5f6f8;
+  --ss-muted: #9a9ead;
+  --ss-accent: #ff5b2e;
+  --ss-radius: 18px;
+  width: 100vw;
+  min-height: 100vh;
+  margin-left: calc(50% - 50vw); /* full-bleed out of the centered .main */
+  margin-right: calc(50% - 50vw);
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  font-family: inherit;
+  padding: 0 clamp(16px, 5vw, 64px) 64px;
+  overflow: hidden;
+}
+.shoestore .ss-accent { color: var(--ss-accent); }
+
+.ss-nav {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  max-width: 1200px; margin: 0 auto; padding: 26px 0;
+}
+.ss-nav__brand { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--ss-text); text-decoration: none; }
+.ss-nav__links { display: flex; gap: 28px; }
+.ss-nav__links a { color: var(--ss-muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color .2s; }
+.ss-nav__links a:hover { color: var(--ss-text); }
+.ss-nav__cta {
+  background: var(--ss-accent); color: #fff; text-decoration: none; font-weight: 600; font-size: 14px;
+  padding: 11px 22px; border-radius: 999px; white-space: nowrap;
+}
+
+.ss-btn {
+  display: inline-block; background: var(--ss-accent); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: 15px; padding: 14px 30px; border-radius: 999px; border: none; cursor: pointer;
+  transition: transform .2s, box-shadow .2s; box-shadow: 0 12px 30px rgba(255, 91, 46, 0.3);
+}
+.ss-btn:hover { transform: translateY(-2px); }
+.ss-btn--ghost { background: transparent; color: var(--ss-text); border: 1px solid rgba(255,255,255,0.22); box-shadow: none; }
+
+.ss-hero {
+  max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px;
+  align-items: center; padding: 40px 0 72px;
+}
+.ss-hero__eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; font-weight: 700; color: var(--ss-accent); }
+.ss-hero__heading { font-size: clamp(40px, 6vw, 68px); line-height: 1.03; font-weight: 800; letter-spacing: -0.03em; margin: 16px 0 18px; }
+.ss-hero__sub { color: var(--ss-muted); font-size: 17px; line-height: 1.6; max-width: 30em; }
+.ss-hero__actions { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+.ss-hero__stat { display: flex; align-items: baseline; gap: 10px; margin-top: 34px; }
+.ss-hero__stat b { font-size: 30px; font-weight: 800; }
+.ss-hero__stat span { color: var(--ss-muted); font-size: 14px; }
+.ss-hero__media {
+  position: relative; background: radial-gradient(120% 120% at 70% 20%, #2a2d3a, var(--ss-surface));
+  border-radius: 28px; padding: 30px; min-height: 380px; display: grid; place-items: center;
+}
+.ss-hero__media img { width: 100%; max-width: 520px; filter: drop-shadow(0 40px 60px rgba(0,0,0,0.55)); transform: rotate(-14deg); }
+.ss-hero__placeholder { width: 100%; height: 320px; border-radius: 20px; background: var(--ss-surface-2); }
+.ss-hero__promo {
+  position: absolute; top: 22px; left: 22px; background: var(--ss-accent); color: #fff;
+  font-weight: 700; font-size: 13px; padding: 8px 16px; border-radius: 999px;
+}
+
+.ss-section-head { max-width: 1200px; margin: 0 auto 28px; text-align: center; }
+.ss-section-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.02em; }
+.ss-section-head p { color: var(--ss-muted); margin-top: 8px; font-size: 15px; }
+
+.ss-products { padding: 40px 0; }
+.ss-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.ss-card {
+  background: var(--ss-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--ss-radius);
+  overflow: hidden; display: flex; flex-direction: column; transition: transform .25s, border-color .25s;
+}
+.ss-card:hover { transform: translateY(-6px); border-color: var(--card-accent, var(--ss-accent)); }
+.ss-card__media {
+  position: relative; aspect-ratio: 1 / 1; display: grid; place-items: center; padding: 18px;
+  background: radial-gradient(120% 120% at 50% 15%, color-mix(in srgb, var(--card-accent, #ff5b2e) 22%, #14161d), var(--ss-surface-2));
+}
+.ss-card__media img { width: 100%; object-fit: contain; transform: rotate(-10deg); transition: transform .3s; }
+.ss-card:hover .ss-card__media img { transform: rotate(-10deg) scale(1.07); }
+.ss-card__placeholder { width: 80%; height: 60%; border-radius: 12px; background: var(--ss-surface); }
+.ss-card__badge {
+  position: absolute; top: 12px; left: 12px; background: var(--card-accent, var(--ss-accent)); color: #fff;
+  font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 999px; z-index: 1;
+}
+.ss-card__body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; }
+.ss-card__rating { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.ss-stars { color: #ffb020; letter-spacing: 1px; }
+.ss-stars__empty { color: rgba(255,255,255,0.18); }
+.ss-card__ratingnum { color: var(--ss-muted); }
+.ss-card__name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.ss-card__desc { color: var(--ss-muted); font-size: 13px; line-height: 1.5; }
+.ss-card__foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.ss-card__price { font-size: 20px; font-weight: 800; }
+.ss-card__add {
+  background: var(--card-accent, var(--ss-accent)); color: #fff; border: none; cursor: pointer;
+  font-weight: 700; font-size: 13px; padding: 9px 20px; border-radius: 999px;
+}
+
+.ss-testimonials { padding: 56px 0; }
+.ss-tgrid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.ss-quote { background: var(--ss-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--ss-radius); padding: 28px; margin: 0; }
+.ss-quote blockquote { margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: var(--ss-text); }
+.ss-quote__by { display: flex; align-items: center; gap: 14px; }
+.ss-quote__by img, .ss-quote__avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; background: var(--ss-surface-2); }
+.ss-quote__by b { display: block; font-size: 15px; }
+.ss-quote__by small { color: var(--ss-muted); font-size: 13px; }
+
+.ss-newsletter {
+  max-width: 900px; margin: 24px auto 0; text-align: center; background: var(--ss-surface);
+  border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 48px 28px;
+}
+.ss-newsletter h2 { font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.02em; }
+.ss-newsletter p { color: var(--ss-muted); margin: 10px 0 24px; }
+.ss-news-form { display: flex; gap: 10px; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+.ss-news-form input {
+  flex: 1 1 240px; background: var(--ss-bg); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px;
+  padding: 14px 20px; color: var(--ss-text); font-size: 15px;
+}
+.ss-news-form input::placeholder { color: var(--ss-muted); }
+.ss-news-form button {
+  background: var(--ss-accent); color: #fff; border: none; cursor: pointer; font-weight: 700;
+  padding: 14px 28px; border-radius: 999px; font-size: 15px;
+}
+
+.ss-footer {
+  max-width: 1200px; margin: 56px auto 0; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.ss-footer__brand { font-size: 20px; font-weight: 800; }
+.ss-footer p { color: var(--ss-muted); font-size: 14px; margin: 0; }
+
+@media (max-width: 900px) {
+  .ss-hero { grid-template-columns: 1fr; }
+  .ss-grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-tgrid { grid-template-columns: 1fr; }
+  .ss-nav__links { display: none; }
+}
+@media (max-width: 520px) {
+  .ss-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================ Shoe store — professional revamp ============================ */
+.shoestore {
+  --ss-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --ss-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --ss-bg: #0e0e12;
+  --ss-surface: #16161c;
+  --ss-surface-2: #1e1e26;
+  --ss-line: rgba(255, 255, 255, 0.09);
+  --ss-text: #f3f3f6;
+  --ss-muted: #9a9aa8;
+  --ss-accent: #ff4a2b;
+  --ss-accent-weak: rgba(255, 74, 43, 0.14);
+  font-family: var(--ss-sans);
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  padding-top: 0;
+}
+.shoestore h1, .shoestore h2, .shoestore h3,
+.ss-nav__brand, .ss-footer__brand { font-family: var(--ss-display); letter-spacing: -0.02em; }
+.shoestore *:focus-visible { outline: 2px solid var(--ss-accent); outline-offset: 3px; border-radius: 4px; }
+.ss-num { font-variant-numeric: tabular-nums; }
+
+/* sticky translucent nav with full-bleed bar */
+.ss-nav {
+  position: sticky; top: 0; z-index: 30; max-width: none;
+  margin: 0 calc(-1 * clamp(16px, 5vw, 64px)); padding: 0 clamp(16px, 5vw, 64px);
+  background: color-mix(in srgb, var(--ss-bg) 74%, transparent);
+  backdrop-filter: saturate(150%) blur(16px); -webkit-backdrop-filter: saturate(150%) blur(16px);
+  border-bottom: 1px solid var(--ss-line);
+}
+.ss-nav__inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0; }
+.ss-nav__brand { display: inline-flex; align-items: center; gap: 9px; font-size: 20px; font-weight: 800; }
+.ss-nav__mark { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: var(--ss-accent); color: #fff; }
+.ss-nav__links { gap: 30px; }
+.ss-nav__links a { position: relative; padding: 6px 0; }
+.ss-nav__links a::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: var(--ss-accent); transition: width .22s ease; }
+.ss-nav__links a:hover::after { width: 100%; }
+.ss-nav__right { display: flex; align-items: center; gap: 12px; }
+.ss-icon-btn { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 999px; border: 1px solid var(--ss-line); color: var(--ss-text); background: transparent; cursor: pointer; transition: border-color .18s, background .18s; }
+.ss-icon-btn:hover { border-color: var(--ss-accent); background: var(--ss-accent-weak); }
+.ss-nav__cta { background: var(--ss-text); color: var(--ss-bg); font-family: var(--ss-sans); font-weight: 600; }
+.ss-nav__cta:hover { background: #fff; }
+
+/* buttons */
+.ss-btn { font-family: var(--ss-sans); display: inline-flex; align-items: center; gap: 9px; box-shadow: none; }
+.ss-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(255, 74, 43, 0.28); }
+.ss-btn svg { width: 17px; height: 17px; }
+
+/* hero */
+.ss-hero { padding: clamp(48px, 8vw, 92px) 0 clamp(56px, 8vw, 96px); gap: clamp(32px, 6vw, 72px); }
+.ss-kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; color: var(--ss-text); background: var(--ss-surface); border: 1px solid var(--ss-line); padding: 7px 14px; border-radius: 999px; }
+.ss-kicker b { color: var(--ss-accent); }
+.ss-hero__eyebrow { display: none; }
+.ss-hero__heading { margin: 22px 0 20px; font-weight: 800; line-height: 0.98; }
+.ss-hero__sub { font-size: 16px; color: var(--ss-muted); }
+.ss-hero__stat { gap: 28px; align-items: center; margin-top: 36px; }
+.ss-hero__ratewrap { display: flex; flex-direction: column; gap: 3px; }
+.ss-hero__stars { display: inline-flex; gap: 2px; color: #ffb020; }
+.ss-hero__stars svg { width: 16px; height: 16px; }
+.ss-hero__stat b { font-family: var(--ss-display); font-size: 26px; }
+.ss-hero__divider { width: 1px; height: 38px; background: var(--ss-line); }
+.ss-hero__media { border: 1px solid var(--ss-line); border-radius: 26px; background:
+  radial-gradient(120% 120% at 72% 18%, #26262f, var(--ss-surface)); overflow: hidden; }
+.ss-hero__media img { transform: rotate(-8deg); transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+.ss-hero__media:hover img { transform: rotate(-8deg) scale(1.04); }
+.ss-hero__promo { background: var(--ss-text); color: var(--ss-bg); }
+
+/* trust strip */
+.ss-trust { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 22px 0; border-top: 1px solid var(--ss-line); border-bottom: 1px solid var(--ss-line); }
+.ss-trust__item { display: flex; align-items: center; gap: 12px; }
+.ss-trust__ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: var(--ss-surface); border: 1px solid var(--ss-line); color: var(--ss-accent); flex: none; }
+.ss-trust__ic svg { width: 19px; height: 19px; }
+.ss-trust__t { font-size: 13.5px; font-weight: 600; }
+.ss-trust__s { font-size: 12px; color: var(--ss-muted); }
+
+/* section eyebrow */
+.ss-section-head { text-align: left; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.ss-eyebrow { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ss-accent); margin-bottom: 10px; }
+.ss-section-head p { margin-top: 0; }
+
+/* product cards — clean, no gimmicky rotation */
+.ss-card { border-radius: 20px; }
+.ss-card__media { padding: 22px; background: linear-gradient(180deg, var(--ss-surface-2), var(--ss-surface)); }
+.ss-card__media::after { content: ''; position: absolute; left: 14%; right: 14%; bottom: 14px; height: 14px; border-radius: 50%; background: rgba(0,0,0,0.45); filter: blur(9px); }
+.ss-card__media img { transform: none; position: relative; z-index: 1; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.ss-card:hover .ss-card__media img { transform: translateY(-6px) scale(1.05); }
+.ss-card__badge { background: var(--ss-text); color: var(--ss-bg); backdrop-filter: none; }
+.ss-card__rating { color: #ffb020; }
+.ss-card__rating svg { width: 14px; height: 14px; }
+.ss-card__foot { align-items: center; margin-top: 10px; }
+.ss-card__price { font-size: 19px; }
+.ss-card__add { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; }
+.ss-card__add svg { width: 15px; height: 15px; }
+.ss-card__add:hover { filter: brightness(1.08); }
+
+/* testimonials */
+.ss-quote { position: relative; padding: 30px; border-radius: 20px; }
+.ss-quote__mark { font-family: var(--ss-display); font-size: 60px; line-height: 0.6; color: var(--ss-accent); opacity: 0.5; height: 24px; }
+.ss-quote__stars { display: inline-flex; gap: 2px; color: #ffb020; margin-bottom: 14px; }
+.ss-quote__stars svg { width: 15px; height: 15px; }
+.ss-quote blockquote { font-size: 15.5px; }
+
+/* newsletter */
+.ss-newsletter { border-radius: 26px; background:
+  radial-gradient(120% 140% at 15% 0%, color-mix(in srgb, var(--ss-accent) 16%, var(--ss-surface)), var(--ss-surface)); }
+.ss-news-form input:focus { border-color: var(--ss-accent); outline: none; }
+
+/* footer — multi-column */
+.ss-footer { flex-direction: column; align-items: stretch; gap: 40px; border-top: 1px solid var(--ss-line); }
+.ss-footer__top { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 32px; }
+.ss-footer__brand { display: block; margin-bottom: 14px; }
+.ss-footer__blurb { color: var(--ss-muted); font-size: 14px; line-height: 1.6; max-width: 30ch; }
+.ss-social { display: flex; gap: 10px; margin-top: 18px; }
+.ss-social a { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--ss-line); color: var(--ss-muted); transition: color .18s, border-color .18s; }
+.ss-social a:hover { color: var(--ss-text); border-color: var(--ss-accent); }
+.ss-social svg { width: 17px; height: 17px; }
+.ss-fcol h4 { font-family: var(--ss-sans); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ss-muted); margin: 0 0 14px; }
+.ss-fcol a { display: block; color: var(--ss-text); opacity: 0.82; text-decoration: none; font-size: 14px; padding: 5px 0; transition: opacity .16s, color .16s; }
+.ss-fcol a:hover { opacity: 1; color: var(--ss-accent); }
+.ss-footer__bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-top: 22px; border-top: 1px solid var(--ss-line); }
+.ss-footer__bar p { margin: 0; color: var(--ss-muted); font-size: 13px; }
+.ss-footer__legal { display: flex; gap: 22px; }
+.ss-footer__legal a { color: var(--ss-muted); font-size: 13px; text-decoration: none; }
+.ss-footer__legal a:hover { color: var(--ss-text); }
+
+@media (max-width: 900px) {
+  .ss-trust { grid-template-columns: repeat(2, 1fr); }
+  .ss-footer__top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .ss-trust { grid-template-columns: 1fr; }
+  .ss-footer__top { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shoestore *, .shoestore *::before, .shoestore *::after { transition: none !important; animation: none !important; }
+  .ss-card:hover .ss-card__media img, .ss-hero__media:hover img { transform: none; }
+}
+
+/* full-bleed editorial product photography — cohesive tiles regardless of source background */
+.ss-card { background: var(--ss-surface); }
+.ss-card__media { padding: 0; aspect-ratio: 4 / 5; background: var(--ss-surface-2); }
+.ss-card__media::after { display: none; }
+.ss-card__media img { width: 100%; height: 100%; object-fit: cover; transform: none; }
+.ss-card:hover .ss-card__media img { transform: scale(1.06); }
+.ss-card__badge { top: 14px; left: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
+
+/* ---- product card v2: refined premium layout ---- */
+.ss-card { border: 1px solid var(--ss-line); border-radius: 18px; overflow: hidden; background: var(--ss-surface); display: flex; flex-direction: column; transition: transform .28s cubic-bezier(.2,.7,.2,1), border-color .28s, box-shadow .28s; }
+.ss-card:hover { transform: translateY(-6px); border-color: color-mix(in srgb, var(--card-accent, #ff4a2b) 55%, var(--ss-line)); box-shadow: 0 22px 48px rgba(0,0,0,0.45); }
+.ss-card__media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; padding: 0; background: var(--ss-surface-2); }
+.ss-card__media::after { display: none; }
+.ss-card__media img { width: 100%; height: 100%; object-fit: cover; transform: none; }
+.ss-card:hover .ss-card__media img { transform: scale(1.06); }
+.ss-card__badge { position: absolute; top: 14px; left: 14px; z-index: 2; background: var(--ss-text); color: var(--ss-bg); font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 999px; }
+.ss-card__wish { position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 999px; border: none; cursor: pointer; color: #fff; background: rgba(14,14,18,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transform: translateY(-4px); transition: opacity .2s, transform .2s, background .2s, color .2s; }
+.ss-card:hover .ss-card__wish { opacity: 1; transform: none; }
+.ss-card__wish:hover { background: #fff; color: var(--ss-accent); }
+.ss-card__wish svg { width: 16px; height: 16px; }
+.ss-card__ratepill { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #fff; background: rgba(14,14,18,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 5px 10px; border-radius: 999px; }
+.ss-card__ratepill svg { width: 13px; height: 13px; color: #ffb020; }
+.ss-card__body { display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 18px; }
+.ss-card__name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+.ss-card__swatches { display: flex; gap: 7px; }
+.ss-card__swatches span { width: 15px; height: 15px; border-radius: 999px; background: var(--sw, #888); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); }
+.ss-card__foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 2px; flex-wrap: wrap; }
+.ss-card__pricewrap { display: flex; flex-direction: column; gap: 3px; }
+.ss-card__plabel { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ss-muted); }
+.ss-card__price { font-family: var(--ss-display); font-size: 20px; font-weight: 700; line-height: 1; }
+.ss-card__add { display: inline-flex; align-items: center; gap: 7px; border: none; cursor: pointer; font-family: var(--ss-sans); font-weight: 600; font-size: 13px; color: #fff; background: var(--card-accent, #ff4a2b); padding: 11px 16px; border-radius: 12px; transition: filter .18s, transform .18s; }
+.ss-card__add:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.ss-card__add svg { width: 15px; height: 15px; }
+
+/* ============================ Shoe store — all-fields sections ============================ */
+
+/* promo ticker bar */
+.ss-ticker {
+  display: flex; align-items: center; justify-content: center; gap: 26px; flex-wrap: wrap;
+  margin: 0 calc(-1 * clamp(16px, 5vw, 64px)); padding: 9px clamp(16px, 5vw, 64px);
+  background: var(--ss-accent); color: #fff; font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em;
+}
+.ss-ticker span { display: inline-flex; align-items: center; gap: 7px; }
+.ss-ticker svg { width: 14px; height: 14px; }
+/* hero USP list */
+.ss-usps { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.ss-usps li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ss-text); }
+.ss-usps svg { width: 15px; height: 15px; color: var(--ss-accent); flex: none; }
+/* generic section frame for new blocks */
+.ss-promise, .ss-specs, .ss-lookbook, .ss-faq, .ss-gallery, .ss-guide, .ss-related, .ss-tags,
+.ss-spotlight, .ss-tiers, .ss-restock, .ss-notes, .ss-press, .ss-counter, .ss-showcase {
+  max-width: 1200px; margin: 0 auto; padding: clamp(44px, 7vw, 84px) 0 0;
+}
+/* brand promise (global field) */
+.ss-promise .ss-section-head { justify-content: center; text-align: center; flex-direction: column; align-items: center; margin-bottom: 26px; }
+.ss-promise__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.ss-promise__item {
+  display: flex; flex-direction: column; gap: 8px; padding: 22px; border-radius: 16px;
+  background: var(--ss-surface); border: 1px solid var(--ss-line);
+}
+.ss-promise__ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 11px; background: var(--ss-accent-weak); color: var(--ss-accent); }
+.ss-promise__ic svg { width: 21px; height: 21px; }
+.ss-promise__ic img { width: 42px; height: 42px; border-radius: 11px; object-fit: cover; }
+.ss-promise__t { font-size: 15px; font-weight: 700; }
+.ss-promise__s { font-size: 13px; color: var(--ss-muted); line-height: 1.5; }
+/* collection code line */
+.ss-collcode { max-width: 1200px; margin: 18px auto 0; text-align: center; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ss-muted); }
+.ss-collcode b { color: var(--ss-text); }
+/* brand story (RTE) */
+.ss-story { max-width: 860px; margin: 0 auto; padding: clamp(48px, 8vw, 96px) 0 0; }
+.ss-story__inner { background: var(--ss-surface); border: 1px solid var(--ss-line); border-radius: 22px; padding: clamp(28px, 5vw, 52px); }
+/* spec highlight strip (modular blocks) */
+.ss-specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.ss-spec { padding: 26px; border-radius: 16px; background: var(--ss-surface); border: 1px solid var(--ss-line); text-align: center; }
+.ss-spec__val { display: block; font-family: var(--ss-display); font-size: 40px; font-weight: 800; line-height: 1; color: var(--ss-accent); }
+.ss-spec__val small { font-size: 18px; font-weight: 700; margin-left: 2px; }
+.ss-spec__label { display: block; margin-top: 8px; font-size: 13px; color: var(--ss-muted); }
+/* feature banner (modular block) */
+.ss-feature {
+  max-width: 1200px; margin: clamp(44px, 7vw, 84px) auto 0; display: grid;
+  grid-template-columns: 1.05fr 1fr; gap: clamp(24px, 5vw, 56px); align-items: center;
+}
+.ss-feature__media { border-radius: 22px; overflow: hidden; border: 1px solid var(--ss-line); background: var(--ss-surface-2); aspect-ratio: 16 / 11; }
+.ss-feature__media img { width: 100%; height: 100%; object-fit: cover; }
+.ss-feature--right .ss-feature__media { order: 2; }
+.ss-feature__text h2 { font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -0.02em; }
+.ss-feature__text p { color: var(--ss-muted); font-size: 16px; line-height: 1.65; margin: 14px 0 24px; max-width: 40ch; }
+/* lookbook + gallery grids */
+.ss-lookbook__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.ss-lookbook__cell { margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 3 / 4; background: var(--ss-surface-2); border: 1px solid var(--ss-line); }
+.ss-lookbook__cell img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.ss-lookbook__cell:hover img { transform: scale(1.05); }
+.ss-gallery__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.ss-gallery__cell { margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--ss-surface-2); border: 1px solid var(--ss-line); }
+.ss-gallery__cell img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.ss-gallery__cell:hover img { transform: scale(1.05); }
+/* faq (modular block) */
+.ss-faq__list { display: flex; flex-direction: column; gap: 10px; }
+.ss-faq__item { background: var(--ss-surface); border: 1px solid var(--ss-line); border-radius: 14px; padding: 4px 20px; }
+.ss-faq__item summary { cursor: pointer; list-style: none; padding: 16px 0; font-weight: 600; font-size: 15.5px; display: flex; justify-content: space-between; align-items: center; }
+.ss-faq__item summary::-webkit-details-marker { display: none; }
+.ss-faq__item summary::after { content: '+'; color: var(--ss-accent); font-size: 22px; font-weight: 400; line-height: 1; }
+.ss-faq__item[open] summary::after { content: '\2212'; }
+.ss-faq__item p { color: var(--ss-muted); line-height: 1.65; margin: 0 0 16px; }
+/* size & care guide (json rte + markdown + link + sizes) */
+.ss-guide__cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: start; }
+.ss-guide__rte { background: var(--ss-surface); border: 1px solid var(--ss-line); border-radius: 20px; padding: clamp(24px, 4vw, 40px); }
+.ss-guide__side { display: flex; flex-direction: column; gap: 22px; }
+.ss-guide__label { display: block; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ss-muted); margin-bottom: 10px; }
+.ss-guide__care { background: var(--ss-surface); border: 1px solid var(--ss-line); border-radius: 16px; padding: 22px 24px; }
+.ss-md h3, .ss-md h4 { font-family: var(--ss-display); margin: 0 0 12px; }
+.ss-md ul { margin: 0; padding-left: 20px; color: var(--ss-muted); line-height: 1.7; }
+.ss-md li { margin: 6px 0; }
+.ss-md p { color: var(--ss-muted); line-height: 1.65; }
+.ss-md blockquote { margin: 14px 0 0; padding: 10px 16px; border-left: 3px solid var(--ss-accent); background: var(--ss-surface-2); border-radius: 0 10px 10px 0; color: var(--ss-text); font-size: 14px; }
+/* chip rows / sizes / tags */
+.ss-chiprow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ss-chiprow--center { justify-content: center; max-width: 1200px; margin: 0 auto 22px; }
+.ss-size { display: inline-grid; place-items: center; min-width: 52px; padding: 9px 12px; border-radius: 10px; background: var(--ss-surface); border: 1px solid var(--ss-line); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; transition: border-color .16s, color .16s; }
+.ss-size:hover { border-color: var(--ss-accent); color: var(--ss-accent); }
+.ss-tags { text-align: center; }
+.ss-tags__label { display: block; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ss-muted); margin-bottom: 14px; }
+.ss-tag { font-size: 13px; font-weight: 600; color: var(--ss-accent); background: var(--ss-accent-weak); padding: 7px 14px; border-radius: 999px; }
+.ss-store__line { display: flex; align-items: flex-start; gap: 8px; color: var(--ss-muted); font-size: 14px; line-height: 1.5; margin: 0 0 10px; white-space: pre-line; }
+.ss-store__line svg { width: 16px; height: 16px; color: var(--ss-accent); flex: none; margin-top: 2px; }
+.ss-store__badge { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 600; color: var(--ss-accent); background: var(--ss-accent-weak); padding: 6px 12px; border-radius: 999px; }
+@media (max-width: 900px) {
+  .ss-promise__grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-tiers__row { grid-template-columns: repeat(2, 1fr); }
+  .ss-restock__cols, .ss-press__grid, .ss-counter, .ss-spotlight__inner, .ss-showcase__links { grid-template-columns: 1fr; }
+  .ss-notes__grid, .ss-showcase__panels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ss-feature { grid-template-columns: 1fr; }
+  .ss-feature--right .ss-feature__media { order: 0; }
+  .ss-guide__cols { grid-template-columns: 1fr; }
+  .ss-lookbook__grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-gallery__grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-footer__top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .ss-promise__grid { grid-template-columns: 1fr 1fr; }
+  .ss-tiers__row, .ss-notes__grid, .ss-showcase__panels, .ss-showcase__stills, .ss-promise--alt .ss-promise__grid { grid-template-columns: 1fr; }
+  .ss-lookbook__grid, .ss-gallery__grid { grid-template-columns: 1fr; }
+  .ss-footer__top { grid-template-columns: 1fr; }
+}
+/* An empty multiple-field instance keeps a visible, selectable box in Visual Builder. */
+.ss-slot-empty { display: inline-block; min-width: 46px; padding: 0 6px; border-radius: 6px;
+  border: 1px dashed var(--ss-line, #d8d8d8); color: var(--ss-muted, #8a8a8a);
+  font-size: 12px; font-style: normal; line-height: 1.7; opacity: .8; }
+
+/* RTE/markdown inside the dark shoe-store surfaces: .prose sets a light-theme dark
+   colour, and the .shoestore overrides never reset it, so headings went dark-on-dark. */
+.shoestore .prose { color: var(--ss-muted); }
+.shoestore .prose h1,
+.shoestore .prose h2,
+.shoestore .prose h3,
+.shoestore .prose h4,
+.shoestore .prose h5,
+.shoestore .prose h6 { color: var(--ss-text); font-family: var(--ss-display); }
+.shoestore .prose h1 { font-size: 30px; letter-spacing: -0.02em; margin: 24px 0 12px; line-height: 1.15; }
+.shoestore .prose h2 { font-size: 24px; letter-spacing: -0.015em; margin: 22px 0 10px; line-height: 1.2; }
+.shoestore .prose h1:first-child,
+.shoestore .prose h2:first-child { margin-top: 0; }
+.shoestore .prose em,
+.shoestore .prose u,
+.shoestore .prose b { color: inherit; }
+.shoestore .prose a { color: var(--ss-accent); }
+.shoestore .prose code { color: var(--ss-text); background: var(--ss-surface-2); padding: 1px 5px; border-radius: 5px; }
+
+/* An empty field container is 0px tall, so Visual Builder has no box to hover or
+   attach an add-instance affordance to. Give every empty tagged slot a real target. */
+.shoestore [data-cslp]:empty:not(img):not(svg):not(video):not(iframe):not(input):not(br):not(hr) {
+  display: block;
+  min-height: 48px;
+  border: 1px dashed var(--ss-line, #2a2a2a);
+  border-radius: 10px;
+  position: relative;
+  margin: 6px 0;
+}
+.shoestore [data-cslp]:empty:not(img):not(svg):not(video):not(iframe):not(input):not(br):not(hr)::after {
+  content: 'Empty - click to add';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ss-muted, #8a8a8a);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+/* Layout hardening.
+   1) `1fr` columns default to min-width:auto, so a wide child (a size chip row, a long
+      markdown line) blows the grid past the viewport and the overflow gets clipped.
+   2) The two-column sections only collapsed at 900px, but the Visual Builder canvas is
+      ~940px wide, which left it in a dead zone where content was cut off. */
+.ss-guide__cols { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+.ss-guide__side,
+.ss-guide__rte,
+.ss-guide__sizes,
+.ss-guide__care,
+.ss-md,
+.ss-showcase__links,
+.ss-spotlight__inner,
+.ss-restock__cols,
+.ss-press__grid { min-width: 0; }
+.ss-md, .ss-guide__rte { overflow-wrap: anywhere; }
+.ss-chiprow { flex-wrap: wrap; }
+
+@media (max-width: 1024px) {
+  /* Only the size/care guide actually overflowed in the 900-1024px band; collapsing
+     the other two-column sections here made their media balloon to full width. */
+  .ss-guide__cols { grid-template-columns: minmax(0, 1fr); }
+  .ss-nav__inner { flex-wrap: wrap; row-gap: 10px; }
+  .ss-nav__brand { font-size: 17px; }
+  .ss-nav__brand > span { max-width: 34ch; }
+  .ss-nav__links { gap: 14px; flex-wrap: wrap; }
+  /* When the header wraps, keep the action cluster on the right rather than
+     letting it stack under the brand on the left. */
+  .ss-nav__right { margin-left: auto; }
+}
+
+/* Section heads were a space-between flex row, which threw the eyebrow to the far left
+   and the heading to the far right. Stack them instead. */
+.ss-section-head { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 2px; }
+.ss-promise .ss-section-head,
+.ss-tiers .ss-section-head { align-items: center; }
+.ss-section-head p { max-width: 62ch; }
+.ss-md__img { display: block; width: 100%; height: auto; border-radius: 12px; margin: 4px 0 14px; }
+
+/* ============================================================================
+   Design polish pass. Layered over the existing tokens rather than replacing
+   them, so the palette and type stay recognisable.
+   ========================================================================= */
+
+/* --- 1. One CTA colour ---------------------------------------------------
+   Every card was painting its "Add to bag" in that shoe's accent_color, so a
+   grid of eight read as eight competing buttons, and the pale accents put white
+   text on a near-white fill. The per-shoe colour now survives only as the first
+   swatch and the hover border, which is what it is for. */
+.shoestore .ss-card__add {
+  background: var(--ss-accent);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 650;
+  padding: 11px 18px;
+  border-radius: 999px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+.shoestore .ss-card__add:hover { filter: none; background: color-mix(in srgb, var(--ss-accent) 86%, #fff); transform: translateY(-1px); }
+.shoestore .ss-card__badge {
+  background: rgba(12, 12, 16, 0.72);
+  color: var(--ss-text);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* --- 2. Media consistency -----------------------------------------------
+   Card images arrived at different aspect ratios, so the grid rows never lined
+   up. Lock the box and let the photo cover it. */
+.shoestore .ss-card__media {
+  aspect-ratio: 4 / 5;
+  height: auto;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--ss-surface-2), var(--ss-surface));
+}
+.shoestore .ss-card__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1);
+}
+.shoestore .ss-card:hover .ss-card__media img { transform: scale(1.035); }
+/* A shoe with no image used to leave a dead black rectangle. */
+.shoestore .ss-card__placeholder {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 100% at 50% 0%, color-mix(in srgb, var(--card-accent, var(--ss-accent)) 16%, transparent), transparent 70%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.028) 0 12px, transparent 12px 24px),
+    var(--ss-surface-2);
+}
+.shoestore .ss-card__placeholder::after {
+  content: 'No image yet';
+  position: absolute; inset: auto 0 50% 0;
+  text-align: center;
+  font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ss-muted);
+}
+
+/* --- 3. Card internals --------------------------------------------------- */
+.shoestore .ss-card {
+  border-radius: 20px;
+  background: var(--ss-surface);
+  transition: transform .22s cubic-bezier(.2,.7,.2,1), border-color .22s, box-shadow .22s;
+}
+.shoestore .ss-card__body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.shoestore .ss-card__name { font-size: 16.5px; line-height: 1.25; margin: 0; }
+.shoestore .ss-card__plabel {
+  font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ss-muted);
+}
+.shoestore .ss-card__price { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
+.shoestore .ss-card__foot { align-items: end; gap: 12px; }
+.shoestore .ss-card__swatches span { width: 13px; height: 13px; box-shadow: 0 0 0 1px rgba(255,255,255,.14); }
+.shoestore .ss-card__ratepill {
+  background: rgba(12,12,16,.72); border: 1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-weight: 600;
+}
+
+/* --- 4. Section rhythm and heads ----------------------------------------
+   Sections all shared one padding value, so nothing signalled a new chapter.
+   A hairline plus a short accent rule gives each one a start. */
+.shoestore .ss-section-head { position: relative; padding-top: 4px; margin-bottom: 30px; }
+.shoestore .ss-section-head h2 { font-size: clamp(26px, 3.1vw, 38px); line-height: 1.08; margin: 0; }
+.shoestore .ss-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.shoestore .ss-eyebrow::before {
+  content: ''; width: 22px; height: 2px; border-radius: 2px; background: var(--ss-accent); opacity: .9;
+}
+.shoestore .ss-section-head p { color: var(--ss-muted); font-size: 15px; line-height: 1.6; margin-top: 10px; }
+
+/* --- 5. Buttons ---------------------------------------------------------- */
+.shoestore .ss-btn {
+  border-radius: 999px; font-weight: 650; letter-spacing: -0.005em;
+  transition: transform .18s, background .18s, border-color .18s, box-shadow .18s;
+}
+.shoestore .ss-btn:hover { transform: translateY(-1px); }
+.shoestore .ss-btn--primary { box-shadow: 0 10px 26px color-mix(in srgb, var(--ss-accent) 30%, transparent); }
+.shoestore .ss-btn--ghost:hover { border-color: color-mix(in srgb, var(--ss-accent) 60%, var(--ss-line)); }
+
+/* --- 6. Hero ------------------------------------------------------------- */
+.shoestore .ss-hero__heading { line-height: 1.02; letter-spacing: -0.035em; }
+.shoestore .ss-hero__sub { font-size: 16.5px; line-height: 1.62; max-width: 52ch; color: var(--ss-muted); }
+.shoestore .ss-hero__media { position: relative; }
+/* A soft accent bloom behind the hero shot, so it sits in the page instead of
+   floating on a flat panel. */
+.shoestore .ss-hero__media::before {
+  content: ''; position: absolute; inset: -8% -6% -12% -6%; z-index: 0; pointer-events: none;
+  background: radial-gradient(60% 55% at 62% 38%, color-mix(in srgb, var(--ss-accent) 26%, transparent), transparent 72%);
+  filter: blur(26px);
+}
+.shoestore .ss-hero__media > * { position: relative; z-index: 1; }
+/* The promo pill has to sit above the rotated shot, which the z-index above
+   would otherwise paint over it. */
+.shoestore .ss-hero__promo { z-index: 3; max-width: calc(100% - 44px); }
+
+/* --- 7. Chips and pills -------------------------------------------------- */
+.shoestore .ss-size { border-radius: 999px; font-size: 12.5px; padding: 8px 14px; min-width: 0; }
+.shoestore .ss-size:hover { border-color: color-mix(in srgb, var(--ss-accent) 55%, var(--ss-line)); color: var(--ss-text); }
+.shoestore .ss-usps li { font-size: 13.5px; }
+
+/* --- 8. Micro-details ---------------------------------------------------- */
+.shoestore ::selection { background: color-mix(in srgb, var(--ss-accent) 34%, transparent); color: #fff; }
+.shoestore img { image-rendering: auto; }
+.shoestore .ss-guide__rte,
+.shoestore .ss-note,
+.shoestore .ss-press__card { border-radius: 18px; }
+@media (prefers-reduced-motion: reduce) {
+  .shoestore .ss-card,
+  .shoestore .ss-card__media img,
+  .shoestore .ss-btn,
+  .shoestore .ss-card__add { transition: none; }
+  .shoestore .ss-card:hover { transform: none; }
+  .shoestore .ss-card:hover .ss-card__media img { transform: none; }
+}
+
+/* ============================================================================
+   REVAMP — "lane markings"
+
+   The content is about measurement and craft: 800 km cushioning tests, gram
+   weights, percent recycled, hand-lasting, shoe trees. So the page is built
+   from the road those shoes are tested on. Asphalt and concrete bands, painted
+   lane lines as the structural device, one road-paint yellow, numerals set like
+   stencilled distance markers.
+
+   Type: Archivo Black for display (a signage face), Archivo for everything
+   else. One family, two roles.
+   ========================================================================= */
+
+.shoestore {
+  --asphalt: #23252a;
+  --kerb: #2e3138;
+  --concrete: #d5d2ca;
+  --concrete-2: #c6c2b8;
+  --paint: #f4f2ec;
+  --ink: #16181c;
+  --lane: #e4b429;
+  --graphite: #8d9199;
+
+  /* remap the old tokens so untouched rules inherit the new palette */
+  --ss-bg: var(--asphalt);
+  --ss-surface: var(--kerb);
+  --ss-surface-2: #363a42;
+  --ss-text: var(--paint);
+  --ss-muted: var(--graphite);
+  --ss-accent: var(--lane);
+  --ss-accent-weak: rgba(228, 180, 41, 0.14);
+  --ss-line: rgba(244, 242, 236, 0.14);
+  --ss-display: 'Archivo Black', 'Archivo', system-ui, sans-serif;
+  --ss-sans: 'Archivo', system-ui, -apple-system, sans-serif;
+  --ss-radius: 4px;
+
+  background: var(--asphalt);
+  color: var(--paint);
+  letter-spacing: 0;
+}
+
+/* ---- type scale ------------------------------------------------------- */
+.shoestore h1,
+.shoestore h2,
+.shoestore h3,
+.shoestore .ss-nav__brand,
+.shoestore .ss-footer__brand {
+  font-family: var(--ss-display);
+  font-weight: 400;              /* Archivo Black is already the weight */
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+.shoestore .ss-hero__heading { font-size: clamp(44px, 7.4vw, 104px); line-height: 0.92; letter-spacing: -0.035em; }
+.shoestore .ss-section-head h2 { font-size: clamp(28px, 3.6vw, 46px); line-height: 0.98; }
+.shoestore .ss-num,
+.shoestore .ss-card__price,
+.shoestore .ss-hero__stat b,
+.shoestore .ss-spec__value { font-family: var(--ss-display); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+
+/* Painted rule replaces the old accent tick, and no all-caps eyebrow. */
+.shoestore .ss-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--ss-sans); font-weight: 600; font-size: 12.5px;
+  letter-spacing: 0.02em; text-transform: none; color: var(--lane);
+  margin-bottom: 14px;
+}
+.shoestore .ss-eyebrow::before { content: ''; width: 30px; height: 4px; border-radius: 0; background: var(--lane); }
+
+/* ---- the lane device --------------------------------------------------
+   A painted dashed line runs down the left edge of every section, so the page
+   reads as one continuous road rather than a stack of cards. */
+.shoestore .ss-promise,
+.shoestore .ss-specs,
+.shoestore .ss-lookbook,
+.shoestore .ss-faq,
+.shoestore .ss-gallery,
+.shoestore .ss-guide,
+.shoestore .ss-related,
+.shoestore .ss-spotlight,
+.shoestore .ss-tiers,
+.shoestore .ss-notes,
+.shoestore .ss-press,
+.shoestore .ss-counter,
+.shoestore .ss-showcase,
+.shoestore .ss-products {
+  position: relative;
+  padding-top: clamp(56px, 8vw, 104px);
+}
+.shoestore .ss-promise::before,
+.shoestore .ss-specs::before,
+.shoestore .ss-gallery::before,
+.shoestore .ss-guide::before,
+.shoestore .ss-related::before,
+.shoestore .ss-faq::before,
+.shoestore .ss-products::before {
+  content: '';
+  position: absolute; left: -22px; top: clamp(56px, 8vw, 104px); bottom: 0; width: 4px;
+  background: repeating-linear-gradient(180deg, var(--lane) 0 18px, transparent 18px 34px);
+  opacity: 0.5;
+}
+
+/* ---- nav: a painted sign bar ------------------------------------------ */
+.shoestore .ss-nav {
+  background: color-mix(in srgb, var(--asphalt) 88%, transparent);
+  border-bottom: 3px solid var(--lane);
+}
+.shoestore .ss-nav__brand { font-size: 19px; letter-spacing: -0.03em; }
+.shoestore .ss-nav__mark { border-radius: 2px; background: var(--lane); color: var(--ink); }
+.shoestore .ss-nav__links a { font-weight: 500; font-size: 14px; color: var(--paint); opacity: 0.72; }
+.shoestore .ss-nav__links a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 2px; text-decoration-color: var(--lane); }
+.shoestore .ss-nav__cta {
+  background: var(--lane); color: var(--ink); border-radius: 2px;
+  font-weight: 700; font-size: 13.5px; padding: 11px 18px;
+}
+.shoestore .ss-ticker { background: var(--kerb); color: var(--paint); border-bottom: 1px solid var(--ss-line); }
+.shoestore .ss-ticker span { font-size: 12.5px; font-weight: 500; }
+
+/* ---- hero: type on asphalt, shot bleeding right ----------------------- */
+.shoestore .ss-hero__promo {
+  background: var(--lane); color: var(--ink); border-radius: 2px;
+  font-weight: 700; font-size: 12.5px; letter-spacing: 0;
+}
+.shoestore .ss-hero__media {
+  border: none; border-radius: 2px; background: var(--kerb);
+  box-shadow: inset 0 0 0 1px var(--ss-line);
+}
+.shoestore .ss-hero__media::before { display: none; }   /* the bloom belonged to the old look */
+.shoestore .ss-hero__media img { transform: none; filter: none; }
+.shoestore .ss-hero__media:hover img { transform: none; }
+.shoestore .ss-hero__sub { font-size: 17px; line-height: 1.6; max-width: 46ch; color: #b9bdc4; }
+.shoestore .ss-hero__eyebrow,
+.shoestore .ss-hero__kicker {
+  background: var(--kerb); border: 1px solid var(--ss-line); border-radius: 2px;
+}
+/* stats read as distance markers on the lane */
+.shoestore .ss-hero__stats { border-top: 3px solid var(--lane); padding-top: 18px; gap: clamp(24px, 4vw, 56px); }
+.shoestore .ss-hero__divider { display: none; }
+.shoestore .ss-hero__stat b { font-size: 30px; }
+.shoestore .ss-hero__stat span { color: var(--graphite); font-size: 12.5px; }
+
+/* ---- buttons: painted blocks, no pills, no arrows --------------------- */
+.shoestore .ss-btn,
+.shoestore .ss-card__add,
+.shoestore .ss-nav__cta { border-radius: 2px; }
+.shoestore .ss-btn { font-family: var(--ss-sans); font-weight: 700; font-size: 14px; padding: 14px 22px; box-shadow: none; }
+.shoestore .ss-btn--primary { background: var(--lane); color: var(--ink); border: 3px solid var(--lane); }
+.shoestore .ss-btn--primary:hover { background: color-mix(in srgb, var(--lane) 84%, var(--paint)); transform: none; }
+.shoestore .ss-btn--ghost { background: transparent; color: var(--paint); border: 3px solid rgba(244,242,236,.22); }
+.shoestore .ss-btn--ghost:hover { border-color: var(--lane); color: var(--paint); transform: none; }
+
+/* ---- the concrete band: products sit on a light surface --------------- */
+.shoestore .ss-products {
+  background: var(--concrete);
+  color: var(--ink);
+  margin: clamp(64px, 9vw, 120px) calc(-1 * clamp(16px, 5vw, 64px)) 0;
+  padding: clamp(56px, 8vw, 96px) clamp(16px, 5vw, 64px) clamp(56px, 8vw, 96px);
+  max-width: none;
+}
+.shoestore .ss-products::before { display: none; }
+.shoestore .ss-products > * { max-width: 1200px; margin-left: auto; margin-right: auto; }
+.shoestore .ss-products h2,
+.shoestore .ss-products .ss-section-head h2 { color: var(--ink); }
+.shoestore .ss-products .ss-section-head p { color: #4b4f56; }
+.shoestore .ss-products .ss-eyebrow { color: #8a5b00; }
+.shoestore .ss-products .ss-eyebrow::before { background: #8a5b00; }
+.shoestore .ss-products .ss-size { background: rgba(0,0,0,.05); border-color: rgba(0,0,0,.16); color: var(--ink); }
+.shoestore .ss-products .ss-size:hover { border-color: var(--ink); }
+.shoestore .ss-products .ss-guide__label,
+.shoestore .ss-products .ss-store__line { color: #4b4f56; }
+
+/* ---- product cards: spec plates, not SaaS cards ----------------------- */
+.shoestore .ss-card {
+  background: var(--paint);
+  border: 1px solid rgba(0,0,0,.14);
+  border-radius: 2px;
+  box-shadow: none;
+  color: var(--ink);
+  overflow: hidden;
+}
+.shoestore .ss-card:hover { transform: none; border-color: var(--ink); box-shadow: 6px 6px 0 0 var(--lane); }
+.shoestore .ss-card__media { aspect-ratio: 1 / 1; background: var(--concrete-2); border-bottom: 1px solid rgba(0,0,0,.12); }
+.shoestore .ss-card:hover .ss-card__media img { transform: none; }
+.shoestore .ss-card__badge {
+  background: var(--ink); color: var(--paint); border: none; border-radius: 2px;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  font-size: 11px; font-weight: 700; padding: 5px 9px; top: 10px; left: 10px;
+}
+.shoestore .ss-card__ratepill {
+  background: var(--lane); color: var(--ink); border: none; border-radius: 2px;
+  backdrop-filter: none; -webkit-backdrop-filter: none; font-weight: 700; font-size: 12px;
+}
+.shoestore .ss-card__wish { background: rgba(244,242,236,.9); color: var(--ink); border-radius: 2px; }
+.shoestore .ss-card__body { background: var(--paint); padding: 14px 16px 16px; gap: 10px; }
+.shoestore .ss-card__name { color: var(--ink); font-size: 16px; }
+.shoestore .ss-card__plabel { display: none; }        /* the price needs no label */
+.shoestore .ss-card__price { color: var(--ink); font-size: 22px; }
+.shoestore .ss-card__swatches span { box-shadow: 0 0 0 1px rgba(0,0,0,.22); }
+.shoestore .ss-card__add {
+  background: var(--ink); color: var(--paint); font-weight: 700; font-size: 13px;
+  padding: 11px 16px; border-radius: 2px; box-shadow: none;
+}
+.shoestore .ss-card__add:hover { background: var(--lane); color: var(--ink); transform: none; }
+.shoestore .ss-card__placeholder { background: var(--concrete-2); }
+.shoestore .ss-card__placeholder::after { color: #6b6f76; content: 'Photo to come'; }
+
+/* ---- spec numbers as stencilled markers ------------------------------- */
+.shoestore .ss-specs { display: grid; gap: 2px; }
+.shoestore .ss-spec {
+  background: var(--kerb); border: none; border-left: 4px solid var(--lane); border-radius: 0;
+  padding: 26px 28px;
+}
+.shoestore .ss-spec__value { font-size: clamp(40px, 5vw, 62px); line-height: 0.9; color: var(--paint); }
+.shoestore .ss-spec__unit { color: var(--lane); font-size: 0.42em; }
+.shoestore .ss-spec__label { color: var(--graphite); font-size: 13px; margin-top: 10px; }
+
+/* ---- promise / notes / press plates ----------------------------------- */
+.shoestore .ss-promise__item,
+.shoestore .ss-note,
+.shoestore .ss-press__card,
+.shoestore .ss-guide__rte,
+.shoestore .ss-guide__care,
+.shoestore .ss-faq__item,
+.shoestore .ss-testimonial {
+  background: var(--kerb); border: 1px solid var(--ss-line); border-radius: 2px;
+}
+.shoestore .ss-promise__ic { background: var(--lane); color: var(--ink); border-radius: 2px; }
+.shoestore .ss-promise__t { font-family: var(--ss-display); font-size: 15.5px; }
+
+/* ---- gallery / lookbook: hard edges, no rounding ---------------------- */
+.shoestore .ss-gallery__cell,
+.shoestore .ss-lookbook__cell,
+.shoestore .ss-showcase,
+.shoestore .ss-showcase--dark,
+.shoestore .ss-showcase--accent { border-radius: 2px; }
+.shoestore .ss-showcase--accent { background: var(--kerb); }
+
+/* ---- size chips ------------------------------------------------------- */
+.shoestore .ss-size { border-radius: 2px; font-family: var(--ss-sans); font-weight: 600; }
+.shoestore .ss-chiprow { gap: 8px; }
+
+/* ---- footer ----------------------------------------------------------- */
+.shoestore .ss-footer { border-top: 3px solid var(--lane); }
+.shoestore .ss-footer__brand { font-size: 20px; }
+
+/* ---- empty editable slots keep the new language ----------------------- */
+.shoestore [data-cslp]:empty:not(img):not(svg):not(video):not(iframe):not(input):not(br):not(hr) { border-radius: 2px; border-color: rgba(244,242,236,.2); }
+.shoestore .ss-products [data-cslp]:empty { border-color: rgba(0,0,0,.22); }
+.shoestore .ss-products [data-cslp]:empty::after { color: #6b6f76; }
+
+/* ---- restraint: no idle motion --------------------------------------- */
+.shoestore .ss-card,
+.shoestore .ss-card__media img { transition: border-color .18s, box-shadow .18s, background .18s; }
+@media (max-width: 720px) {
+  .shoestore .ss-promise::before,
+  .shoestore .ss-specs::before,
+  .shoestore .ss-gallery::before,
+  .shoestore .ss-guide::before,
+  .shoestore .ss-related::before,
+  .shoestore .ss-faq::before,
+  .shoestore .ss-products::before { display: none; }
+}
+
+/* ---- kill the template tells -----------------------------------------
+   Tracked-out ALL-CAPS labels and middle-dot meta strings are the giveaway of
+   a generated page, and they fight the signage type. Sentence case, tighter. */
+.shoestore .ss-guide__label,
+.shoestore .ss-tags__label,
+.shoestore .ss-collcode,
+.shoestore .ss-fcol h4,
+.shoestore .ss-hero__eyebrow,
+.shoestore .ss-readlist small,
+.shoestore .rte-embed__kicker,
+.shoestore .ss-tier__stock,
+.shoestore .ss-card__plabel {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+.shoestore .ss-guide__label,
+.shoestore .ss-tags__label { font-size: 13px; color: var(--graphite); }
+.shoestore .ss-collcode { font-size: 12.5px; text-align: left; }
+.shoestore .ss-products .ss-collcode { color: #4b4f56; }
+
+/* ---- product shots: show the whole shoe -------------------------------
+   A square crop with cover was slicing the toe or heel off the taller studio
+   shots, so contain them on the concrete ground instead. */
+.shoestore .ss-card__media img { object-fit: contain; padding: 10px; }
+.shoestore .ss-card__media { background: var(--paint); }
+.shoestore .ss-card__placeholder { background: var(--concrete-2); }
+
+/* ---- hero stat row: distance markers on a painted rule ---------------- */
+.shoestore .ss-hero__rate { border-top: 3px solid var(--lane); padding-top: 20px; margin-top: 34px; gap: clamp(28px, 5vw, 64px); align-items: baseline; }
+.shoestore .ss-hero__ratewrap { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.shoestore .ss-hero__ratewrap b { font-size: clamp(26px, 3vw, 34px); line-height: 1; }
+.shoestore .ss-hero__substat { color: var(--graphite); font-size: 13px; font-weight: 500; }
+.shoestore .ss-hero__stars { gap: 3px; }
+
+/* ---- default button variant ------------------------------------------
+   Plain `.ss-btn` kept the old white label, which on the yellow ground was a
+   1.93 contrast ratio. Scoped so the ghost and primary variants are untouched. */
+.shoestore .ss-btn:not(.ss-btn--ghost):not(.ss-btn--primary) {
+  background: var(--lane);
+  color: var(--ink);
+  border: 3px solid var(--lane);
+}
+.shoestore .ss-btn:not(.ss-btn--ghost):not(.ss-btn--primary):hover {
+  background: color-mix(in srgb, var(--lane) 84%, var(--paint));
+  color: var(--ink);
+}
+.shoestore .ss-products .ss-btn:not(.ss-btn--ghost):not(.ss-btn--primary) { border-color: var(--lane); }
+
+/* ---- hero stat row (the real class is .ss-hero__stat) ------------------
+   Distance markers sitting on a painted rule, with the rating no longer
+   colliding with its own label. */
+.shoestore .ss-hero__stat {
+  border-top: 3px solid var(--lane);
+  padding-top: 20px;
+  margin-top: 36px;
+  gap: clamp(30px, 5vw, 68px);
+  align-items: start;
+}
+.shoestore .ss-hero__stat .ss-hero__ratewrap { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.shoestore .ss-hero__stat .ss-hero__substat { display: flex; flex-direction: column; gap: 2px; color: var(--graphite); font-size: 13px; font-weight: 500; }
+.shoestore .ss-hero__stat .ss-hero__substat b { font-size: clamp(26px, 3vw, 34px); line-height: 1; color: var(--paint); }
+.shoestore .ss-hero__stat > .ss-hero__ratewrap > b { font-size: clamp(26px, 3vw, 34px); line-height: 1; }
+.shoestore .ss-hero__stars { gap: 3px; color: var(--lane); }
+
+/* nav links are wrapped for per-instance edit tags. The padding is the wrapper's own
+   hit area: without it the anchor fills it and a click resolves to the label instead. */
+.shoestore .ss-nav__links > span { display: inline-flex; align-items: center; padding: 8px 7px; }
+.shoestore .ss-nav__links { gap: 16px; }
+
+/* Selection band for multiple-field instances. On these three the children cover
+   the whole box, leaving only the 1px border to click, so the canvas selected a leaf. */
+.shoestore .ss-card[data-cs-instance],
+.shoestore .ss-gallery__cell[data-cs-instance],
+.shoestore .ss-lookbook__cell[data-cs-instance],
+.shoestore .ss-feature[data-cs-instance] { padding: 8px; }
+.shoestore .ss-lookbook__cell[data-cs-instance] img { border-radius: 10px; }
+.shoestore .ss-card[data-cs-instance] .ss-card__media { border-radius: 12px 12px 0 0; overflow: hidden; }
+.shoestore .ss-gallery__cell[data-cs-instance] img { border-radius: 10px; }
+
+/* Promo blocks. The empty list keeps a real box: the canvas hydrates its own
+   placeholder into it, and a 0px-tall container would have nothing to hydrate. */
+.shoestore .ss-promo { padding: clamp(28px, 5vw, 56px) clamp(18px, 4vw, 48px); }
+.shoestore .ss-promo__list { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); min-height: 96px; }
+.shoestore .ss-promo__item { padding: 8px; border: 1px solid var(--ss-line); border-radius: 14px; background: var(--ss-surface); }
+.shoestore .ss-promo__label { display: block; font-size: 13px; color: var(--ss-muted); }

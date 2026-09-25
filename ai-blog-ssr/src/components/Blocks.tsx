@@ -2,6 +2,7 @@ import type { Block, BlockData, CsAsset } from '@/lib/types'
 import { Rte } from '@/lib/rte'
 import { edit } from '@/lib/cslp'
 import { imageUrl } from '@/lib/format'
+import { imgLoading } from '@/lib/img'
 
 // Renders the modular `blocks` field. Each block is a single-key object whose
 // key is the block type. We render image, quote, callout, and rich_text.
@@ -28,7 +29,7 @@ export default function Blocks({ blocks }: { blocks?: Block[] }) {
             return (
               <figure className="block block--image" key={i}>
                 {img?.url && (
-                  <img src={imageUrl(img.url, 1000)} alt={data.caption ?? ''} loading="lazy" {...edit(img.$, 'url')} />
+                  <img src={imageUrl(img.url, 1000)} alt={data.caption ?? ''} loading={imgLoading()} {...edit(img.$, 'url')} />
                 )}
                 {data.caption ? <figcaption {...edit(tags, 'caption')}>{data.caption}</figcaption> : null}
               </figure>

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@contentstack/delivery-sdk": "^5.2.0",
-    "@contentstack/live-preview-utils": "^4.4.3",
+    "@contentstack/live-preview-utils": "file:vendor/contentstack-live-preview-utils-4.4.5-ce-auto-draft-lp.tgz",
     "@contentstack/utils": "^1.9.1",
     "next": "16.2.5",
     "react": "19.2.4",

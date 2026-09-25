@@ -25,6 +25,7 @@ import Reports from './pages/Reports'
 import ReportDetail from './pages/ReportDetail'
 import AllFields from './pages/AllFields'
 import GraphqlFields from './pages/GraphqlFields'
+import ShoeStore from './pages/ShoeStore'
 import { Empty } from './components/States'
 
 // Canonicalize any path to `/:region/:locale/...`. If the first segment isn't a
@@ -50,6 +51,10 @@ function RedirectToDefaults() {
 export default function App() {
   return (
     <Routes>
+      {/* Standalone: the shoe store is a full-page landing with its own nav,
+          rendered OUTSIDE Layout so the app (Synapse) topbar/footer don't show. */}
+      <Route path=":region/:locale/shoes" element={<ShoeStore />} />
+
       <Route path=":region/:locale" element={<Layout />}>
         <Route index element={<Home />} />
 

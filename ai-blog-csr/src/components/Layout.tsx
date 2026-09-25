@@ -9,6 +9,7 @@ import { DEFAULT_REGION, isKnownRegion } from '../lib/regions'
 // entries in the active region are hidden. Items with ct undefined always show.
 const NAV: Array<{ to: string; label: string; end: boolean; ct?: string }> = [
   { to: '', label: 'Home', end: true },
+  { to: 'shoes', label: 'Shoes', end: false },
   { to: 'tools', label: 'Tools', end: false, ct: 'ai_tool' },
   { to: 'models', label: 'Models', end: false, ct: 'ai_model' },
   { to: 'companies', label: 'Companies', end: false, ct: 'ai_company' },

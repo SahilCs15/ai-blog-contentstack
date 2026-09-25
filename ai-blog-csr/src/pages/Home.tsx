@@ -8,6 +8,7 @@ import { edit } from '../lib/cslp'
 import { imageUrl } from '../lib/format'
 import ToolCard from '../components/ToolCard'
 import { Loading, ErrorState } from '../components/States'
+import { imgLoading } from '../lib/img'
 
 interface HomeData {
   page: LandingPage | null
@@ -110,7 +111,7 @@ export default function Home() {
             {data.news.map((a) => (
               <article className="post-card" key={a.uid}>
                 <Link to={`/news/${a.slug ?? a.uid}`} className="post-card__media">
-                  {a.featured_image?.url ? <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading="lazy" /> : <div className="post-card__placeholder" />}
+                  {a.featured_image?.url ? <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading={imgLoading()} /> : <div className="post-card__placeholder" />}
                 </Link>
                 <div className="post-card__body">
                   <h3 className="post-card__title"><Link to={`/news/${a.slug ?? a.uid}`} {...edit(a.$, 'title')}>{a.title}</Link></h3>

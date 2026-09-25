@@ -3,6 +3,7 @@ import type { BlogPost, Author, Category } from '@/lib/types'
 import { one } from '@/lib/types'
 import { edit } from '@/lib/cslp'
 import { imageUrl, formatDate } from '@/lib/format'
+import { imgLoading } from '@/lib/img'
 
 export default function PostCard({ post }: { post: BlogPost }) {
   const author = one<Author>(post.author)
@@ -15,7 +16,7 @@ export default function PostCard({ post }: { post: BlogPost }) {
       <Link href={href} className="post-card__media">
         {post.hero_image?.url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl(post.hero_image.url, 800)} alt={post.title} loading="lazy" {...edit(post.hero_image.$, 'url')} />
+          <img src={imageUrl(post.hero_image.url, 800)} alt={post.title} loading={imgLoading()} {...edit(post.hero_image.$, 'url')} />
         ) : (
           <div className="post-card__placeholder" />
         )}

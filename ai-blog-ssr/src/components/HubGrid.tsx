@@ -9,6 +9,7 @@ import { one } from '@/lib/types'
 import { edit } from '@/lib/cslp'
 import { imageUrl, formatDate } from '@/lib/format'
 import ToolCard from './ToolCard'
+import { imgLoading } from '@/lib/img'
 
 type Kind = 'tool' | 'company' | 'model' | 'tutorial' | 'comparison' | 'usecase' | 'report' | 'glossary' | 'news'
 
@@ -165,7 +166,7 @@ function Card({ item, kind }: { item: any; kind: Kind }) {
       return (
         <article className="post-card">
           <Link href={`/news/${a.slug ?? a.uid}`} className="post-card__media">
-            {a.featured_image?.url ? <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading="lazy" {...edit(a.featured_image.$, 'url')} /> : <div className="post-card__placeholder" />}
+            {a.featured_image?.url ? <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading={imgLoading()} {...edit(a.featured_image.$, 'url')} /> : <div className="post-card__placeholder" />}
           </Link>
           <div className="post-card__body">
             <h3 className="post-card__title"><Link href={`/news/${a.slug ?? a.uid}`} {...edit(a.$, 'title')}>{a.title}</Link></h3>

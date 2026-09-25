@@ -3,6 +3,7 @@ import type { BlogPost, Author, Category } from '../lib/types'
 import { one } from '../lib/types'
 import { edit } from '../lib/cslp'
 import { imageUrl, formatDate } from '../lib/format'
+import { imgLoading } from '../lib/img'
 
 export default function PostCard({ post }: { post: BlogPost }) {
   const author = one<Author>(post.author)
@@ -17,7 +18,7 @@ export default function PostCard({ post }: { post: BlogPost }) {
           <img
             src={imageUrl(post.hero_image.url, 800)}
             alt={post.title}
-            loading="lazy"
+            loading={imgLoading()}
             {...edit(post.hero_image.$, 'url')}
           />
         ) : (

@@ -6,6 +6,7 @@ import type { AiNews } from '../lib/hub-types'
 import { edit } from '../lib/cslp'
 import { imageUrl, formatDate } from '../lib/format'
 import { Loading, ErrorState, Empty } from '../components/States'
+import { imgLoading } from '../lib/img'
 
 const PAGE = 24
 
@@ -50,7 +51,7 @@ export default function News() {
               <article className="post-card" key={a.uid}>
                 <Link to={`/news/${a.slug ?? a.uid}`} className="post-card__media">
                   {a.featured_image?.url ? (
-                    <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading="lazy" {...edit(a.featured_image.$, 'url')} />
+                    <img src={imageUrl(a.featured_image.url, 700)} alt={a.title} loading={imgLoading()} {...edit(a.featured_image.$, 'url')} />
                   ) : <div className="post-card__placeholder" />}
                 </Link>
                 <div className="post-card__body">

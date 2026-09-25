@@ -23,6 +23,7 @@ export interface RegionConfig {
 
 // Known region ids + labels. Values live in env (see header).
 const LABELS: Record<string, string> = {
+  local: 'Local (self-hosted)',
   dev11: 'Dev11 (nonprod)',
   dev23: 'Dev23 (nonprod)',
   'aws-stag': 'AWS Stage',

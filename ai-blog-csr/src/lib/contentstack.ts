@@ -5,13 +5,13 @@
 // the live_preview hash on every query and re-renders via an onEntryChange
 // callback whenever an editor changes a field in the Visual Builder.
 
-import contentstack, { Region, QueryOperation, type LivePreviewQuery } from '@contentstack/delivery-sdk'
+import contentstack, { Region, QueryOperation, type LivePreviewQuery, type ContentstackPlugin } from '@contentstack/delivery-sdk'
 import ContentstackLivePreview, { type IStackSdk } from '@contentstack/live-preview-utils'
 import { addEditableTags } from '@contentstack/utils'
 import { config } from './config'
 import { resolveLocale } from './locale'
 import { toCsError } from './cs-error'
-import type { BlogPost, LandingPage, Author, Category } from './types'
+import type { BlogPost, LandingPage, Author, Category, ShoeLanding } from './types'
 
 /** Context attached to every error so the on-page error card shows where it failed. */
 function ctx(extra: Record<string, string | undefined> = {}): Record<string, string | undefined> {
@@ -26,17 +26,53 @@ function ctx(extra: Record<string, string | undefined> = {}): Record<string, str
   }
 }
 
+// A bare hostname (cdn.contentstack.io, dev11-cdn.csnonprod.com) goes through
+// the SDK's host builder, which forms `https://<host>:443/v3`. A self-hosted
+// host that already carries a port and/or path (localhost:8081/api) can't: the
+// builder would inject the port mid-string → `https://localhost:8081/api:443/v3`
+// (404). For those, pass a full `endpoint` (baseURL) so the builder is bypassed.
+// The preview host is applied separately (string-concatenated), so it is
+// unaffected either way.
+function cdnHostConfig(cdnHost: string): { host: string } | { endpoint: string } {
+  return /[:/]/.test(cdnHost) ? { endpoint: `https://${cdnHost}/v3` } : { host: cdnHost }
+}
+
+/**
+ * Ask the Preview Service to serve auto-draft content.
+ *
+ * The service decides per request in its draft interceptor:
+ *   isDraftEligibleTracker = header === 'true' || ctx.type === TrackerTypes.livePreview
+ * Visual Builder is its own tracker type, so it is NOT draft-eligible by default
+ * and the canvas silently renders published content. This header is the opt-in
+ * for any tracker. It only goes out on preview requests; the published site is
+ * untouched.
+ */
+const DRAFT_PREVIEW_HEADER = 'x-cs-preview-enable-entry-draft'
+
+class DraftPreviewPlugin implements ContentstackPlugin {
+  onRequest(reqConfig: any): any {
+    const target = [reqConfig?.baseURL, reqConfig?.url, reqConfig?.host].filter(Boolean).join(' ')
+    const params = reqConfig?.params ?? {}
+    if (!/preview/i.test(target) && !params.live_preview) return reqConfig
+    return { ...reqConfig, headers: { ...(reqConfig?.headers ?? {}), [DRAFT_PREVIEW_HEADER]: 'true' } }
+  }
+  onResponse(_request: any, response: any, _data: any): any {
+    return response
+  }
+}
+
 export const stack = contentstack.stack({
   apiKey: config.apiKey,
   deliveryToken: config.deliveryToken,
   environment: config.environment,
   region: Region.US, // host overrides below point it at dev23/csnonprod
-  host: config.cdnHost,
+  ...cdnHostConfig(config.cdnHost),
   live_preview: {
     enable: true,
     preview_token: config.previewToken,
     host: config.previewHost,
   },
+  plugins: [new DraftPreviewPlugin()],
 })
 
 let lpReady = false
@@ -117,15 +153,32 @@ function tagify<T>(entry: T, contentTypeUid: string, locale: string): T {
   return entry
 }
 
+// A self-hosted delivery API may not support include[] (reference resolution):
+// it rejects any include with error 141 ("is not a valid reference"). When that
+// happens, retry the same query once with includes turned off — references then
+// stay as { uid, _content_type_uid } pointers, which the renderers already
+// tolerate. Real clusters resolve includes, so the retry never fires there.
+function isIncludeUnsupported(e: unknown): boolean {
+  return (e as { error_code?: number } | null)?.error_code === 141
+}
+
+async function withIncludeFallback<T>(run: (includes: boolean) => Promise<T>): Promise<T> {
+  try {
+    return await run(true)
+  } catch (e) {
+    if (isIncludeUnsupported(e)) return run(false)
+    throw e
+  }
+}
+
 export async function getLandingPage(locale: string = resolveLocale()): Promise<LandingPage | null> {
   try {
     applyLivePreview()
-    const q = stack
-      .contentType('page')
-      .entry()
-      .locale(locale)
-      .includeReference(...INCLUDE_PAGE)
-    const res = await q.find<LandingPage>()
+    const res = await withIncludeFallback<{ entries?: LandingPage[] }>((inc) => {
+      let q: any = stack.contentType('page').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_PAGE)
+      return q.find()
+    })
     const page = res.entries?.[0]
     if (!page) return null
     return tagify(page, 'page', locale)
@@ -134,15 +187,90 @@ export async function getLandingPage(locale: string = resolveLocale()): Promise<
   }
 }
 
+const INCLUDE_SHOE_LANDING = [
+  'featured_shoes',
+  'related_products',
+  'spotlight_shoe',
+  'store_info.staff_pick',
+  'sections.nested_showcase.linked_shoe',
+  'sections.nested_showcase.linked_reads',
+] as const
+
+/**
+ * Resolve the entries embedded in the Size & Care JSON RTE. The delivery API on
+ * this stack does not auto-fill _embedded_items, so we walk the doc for entry
+ * reference nodes, fetch each one, and attach a uid->entry map as `_guide_embeds`
+ * so the RTE renderer can draw a product card inline. Asset embeds carry their
+ * own asset-link and need no resolution. Mutates the page in place.
+ */
+async function resolveGuideEmbeds(page: ShoeLanding, locale: string): Promise<void> {
+  const doc = page.size_care_guide as { children?: unknown[] } | undefined
+  if (!doc || typeof doc !== 'object') return
+
+  const refs: Record<string, string>[] = []
+  const walk = (n: unknown) => {
+    if (!n || typeof n !== 'object') return
+    if (Array.isArray(n)) return n.forEach(walk)
+    const node = n as { type?: string; attrs?: Record<string, string>; children?: unknown[] }
+    if (node.type === 'reference' && node.attrs?.type === 'entry') refs.push(node.attrs)
+    if (node.children) walk(node.children)
+  }
+  walk(doc.children)
+  if (!refs.length) return
+
+  const entries = await Promise.all(
+    refs.map(async (a) => {
+      const uid = a['entry-uid']
+      const ct = a['content-type-uid']
+      if (!uid || !ct) return null
+      try {
+        const e = await stack.contentType(ct).entry(uid).locale(locale).fetch<Record<string, unknown>>()
+        return e ? { uid, title: e.title as string, price: e.price as number, image: (e.image ?? null) as never } : null
+      } catch {
+        return null
+      }
+    }),
+  )
+  const map: NonNullable<ShoeLanding['_guide_embeds']> = {}
+  for (const e of entries) if (e) map[e.uid] = e
+  page._guide_embeds = map
+}
+
+/**
+ * The preview API returns `null` for every file field, so nothing inside Visual Builder
+ * renders an image. Refetch the same entry WITHOUT the preview hash and copy the asset
+ * values back in wherever preview left a hole. Image edits therefore preview as the
+ * published asset, which is the trade for having any image at all.
+ */
+export async function getShoeLanding(locale: string = resolveLocale()): Promise<ShoeLanding | null> {
+  try {
+    applyLivePreview()
+    const res = await withIncludeFallback<{ entries?: ShoeLanding[] }>((inc) => {
+      let q: any = stack.contentType('shoe_landing').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_SHOE_LANDING)
+      // Cache-version param: bump when the shoe content changes so the delivery CDN
+      // serves a fresh response instead of a long-lived stale cache of this query URL.
+      q = q.addParams({ _cv: '5' })
+      return q.find()
+    })
+    const page = res.entries?.[0]
+    if (!page) return null
+    tagify(page, 'shoe_landing', locale)
+    await resolveGuideEmbeds(page, locale)
+    return page
+  } catch (e) {
+    throw toCsError(e, ctx({ contentType: 'shoe_landing', operation: 'get shoe landing', locale }))
+  }
+}
+
 export async function getAllPosts(locale: string = resolveLocale()): Promise<BlogPost[]> {
   try {
     applyLivePreview()
-    const q = stack
-      .contentType('blog_post')
-      .entry()
-      .locale(locale)
-      .includeReference(...INCLUDE_POST)
-    const res = await q.find<BlogPost>()
+    const res = await withIncludeFallback<{ entries?: BlogPost[] }>((inc) => {
+      let q: any = stack.contentType('blog_post').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_POST)
+      return q.find()
+    })
     return (res.entries ?? []).map((e) => tagify(e, 'blog_post', locale))
   } catch (e) {
     throw toCsError(e, ctx({ contentType: 'blog_post', operation: 'list posts', locale }))
@@ -152,14 +280,11 @@ export async function getAllPosts(locale: string = resolveLocale()): Promise<Blo
 export async function getPostBySlug(slug: string, locale: string = resolveLocale()): Promise<BlogPost | null> {
   try {
     applyLivePreview()
-    const q = stack
-      .contentType('blog_post')
-      .entry()
-      .locale(locale)
-      .includeReference(...INCLUDE_POST)
-      .query()
-      .where('slug', QueryOperation.EQUALS, slug)
-    const res = await q.find<BlogPost>()
+    const res = await withIncludeFallback<{ entries?: BlogPost[] }>((inc) => {
+      let q: any = stack.contentType('blog_post').entry().locale(locale)
+      if (inc) q = q.includeReference(...INCLUDE_POST)
+      return q.query().where('slug', QueryOperation.EQUALS, slug).find()
+    })
     const post = res.entries?.[0]
     if (!post) return null
     return tagify(post, 'blog_post', locale)
@@ -170,12 +295,11 @@ export async function getPostBySlug(slug: string, locale: string = resolveLocale
 
 export async function getPostByUid(uid: string, locale: string = resolveLocale()): Promise<BlogPost | null> {
   applyLivePreview()
-  const q = stack
-    .contentType('blog_post')
-    .entry(uid)
-    .locale(locale)
-    .includeReference(...INCLUDE_POST)
-  const post = await q.fetch<BlogPost>()
+  const post = await withIncludeFallback<BlogPost | null>((inc) => {
+    let q: any = stack.contentType('blog_post').entry(uid).locale(locale)
+    if (inc) q = q.includeReference(...INCLUDE_POST)
+    return q.fetch()
+  })
   if (!post) return null
   return tagify(post, 'blog_post', locale)
 }
@@ -217,11 +341,13 @@ export async function getList<T>(
 ): Promise<{ items: T[]; total: number }> {
   try {
     applyLivePreview()
-    let q: any = stack.contentType(ct).entry().locale(locale).includeCount()
-    if (opts.include?.length) q = q.includeReference(...opts.include)
-    if (opts.limit) q = q.limit(opts.limit)
-    if (opts.skip) q = q.skip(opts.skip)
-    const res = (await q.find()) as FindResult<T>
+    const res = (await withIncludeFallback((inc) => {
+      let q: any = stack.contentType(ct).entry().locale(locale).includeCount()
+      if (inc && opts.include?.length) q = q.includeReference(...opts.include)
+      if (opts.limit) q = q.limit(opts.limit)
+      if (opts.skip) q = q.skip(opts.skip)
+      return q.find()
+    })) as FindResult<T>
     const items = (res.entries ?? []).map((e) => tagify(e, ct, locale))
     return { items, total: res.count ?? items.length }
   } catch (e) {
@@ -324,14 +450,11 @@ export async function getAllFieldsEntries(
 ): Promise<Record<string, unknown>[]> {
   try {
     applyLivePreview()
-    const res = await stack
-      .contentType(ct)
-      .entry()
-      .locale(locale)
-      .includeReference(...ALL_FIELDS_INCLUDE)
-      .query()
-      .where('url', QueryOperation.EQUALS, url)
-      .find<Record<string, unknown>>()
+    const res = await withIncludeFallback<{ entries?: Record<string, unknown>[] }>((inc) => {
+      let q: any = stack.contentType(ct).entry().locale(locale)
+      if (inc) q = q.includeReference(...ALL_FIELDS_INCLUDE)
+      return q.query().where('url', QueryOperation.EQUALS, url).find()
+    })
     const entries = (res.entries ?? []).map((e) => tagify(e, ct, locale))
     await Promise.all(entries.map((e) => resolveJsonRteEmbeds(e, locale)))
     return entries
@@ -348,13 +471,11 @@ export async function getBySlug<T>(
 ): Promise<T | null> {
   try {
     applyLivePreview()
-    let q: any = stack
-      .contentType(ct)
-      .entry()
-      .locale(locale)
-    if (include.length) q = q.includeReference(...include)
-    q = q.query().where('slug', QueryOperation.EQUALS, slug)
-    const res = (await q.find()) as FindResult<T>
+    const res = (await withIncludeFallback((inc) => {
+      let q: any = stack.contentType(ct).entry().locale(locale)
+      if (inc && include.length) q = q.includeReference(...include)
+      return q.query().where('slug', QueryOperation.EQUALS, slug).find()
+    })) as FindResult<T>
     const entry = res.entries?.[0]
     return entry ? tagify(entry, ct, locale) : null
   } catch (e) {

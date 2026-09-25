@@ -26,3 +26,6 @@ out/
 _backup_*
 contentstack-cli-logs/
 *.bak
+
+*.bak.*
+logs/

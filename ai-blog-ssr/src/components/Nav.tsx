@@ -8,6 +8,7 @@ import type { Locale } from '@/lib/locale'
 // entries in the active region are hidden. Items with ct undefined always show.
 const NAV: Array<{ href: string; label: string; ct?: string }> = [
   { href: '', label: 'Home' },
+  { href: '/shoes', label: 'Shoes' },
   { href: '/tools', label: 'Tools', ct: 'ai_tool' },
   { href: '/models', label: 'Models', ct: 'ai_model' },
   { href: '/companies', label: 'Companies', ct: 'ai_company' },
